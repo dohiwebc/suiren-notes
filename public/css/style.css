@@ -1381,6 +1381,17 @@ body.work-modal-open {
   white-space: nowrap;
 }
 
+a.badge.badge--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+a.badge.badge--link:hover {
+  opacity: 0.72;
+  color: var(--color-accent);
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

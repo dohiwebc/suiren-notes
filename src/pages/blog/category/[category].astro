@@ -8,7 +8,11 @@ import { getAllBlogPosts } from "../../../lib/microcms";
 import { getBlogCategories, getCategoryPath, postMatchesBlogCategory } from "../../../lib/utils";
 
 export async function getStaticPaths() {
-  const categories = BLOG_CATEGORIES.filter((c) => c !== "すべて");
+  const posts = await getAllBlogPosts();
+  const fromConfig = BLOG_CATEGORIES.filter((c) => c !== "すべて");
+  const fromPosts = posts.flatMap((post) => getBlogCategories(post));
+  const categories = [...new Set([...fromConfig, ...fromPosts])];
+
   return categories.map((category) => ({
     params: { category },
     props: { category },

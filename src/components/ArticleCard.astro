@@ -33,7 +33,7 @@ const dateAttr = post.publishedAt || post.createdAt || "";
       />
     </div>
     <div class="card__body">
-      <CategoryBadge categories={getBlogCategories(post)} />
+      <CategoryBadge categories={getBlogCategories(post)} linkable />
       <h3 class="card__title">{post.title}</h3>
       <p class="card__description">{post.description || ""}</p>
       {date && <time class="card__date" datetime={dateAttr}>{date}</time>}

@@ -1,21 +1,34 @@
 ---
+import { getCategoryPath } from "../lib/utils";
+
 interface Props {
   categories: string[];
+  /** true のときカテゴリ別記事一覧へリンク（ブログ用） */
+  linkable?: boolean;
 }
 
-const { categories } = Astro.props;
+const { categories, linkable = false } = Astro.props;
 const labels = categories.map((c) => String(c).trim()).filter(Boolean);
+
+function renderBadge(label: string) {
+  if (linkable) {
+    return (
+      <a href={getCategoryPath(label)} class="badge badge--link">
+        {label}
+      </a>
+    );
+  }
+  return <span class="badge">{label}</span>;
+}
 ---
 
 {
   labels.length > 0 &&
     (labels.length === 1 ? (
-      <span class="badge">{labels[0]}</span>
+      renderBadge(labels[0])
     ) : (
       <span class="badges">
-        {labels.map((label) => (
-          <span class="badge">{label}</span>
-        ))}
+        {labels.map((label) => renderBadge(label))}
       </span>
     ))
 }

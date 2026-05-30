@@ -35,7 +35,6 @@ const { post } = Astro.props;
 const allPosts = await getAllBlogPosts();
 const relatedPosts = getRelatedPosts(post, allPosts);
 const categories = getBlogCategories(post);
-const primaryCategory = categories[0];
 
 const pageTitle = `${post.title} | Suiren Notes`;
 const description = getArticleDescription(post);
@@ -73,9 +72,6 @@ const jsonLd = {
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog/" },
-  ...(primaryCategory
-    ? [{ label: primaryCategory, href: `/blog/category/${encodeURIComponent(primaryCategory)}/` }]
-    : []),
   { label: post.title },
 ];
 ---
@@ -99,7 +95,7 @@ const breadcrumbItems = [
         <header class="article__header">
           <div class="article__meta-row">
             <div class="article__meta">
-              <CategoryBadge categories={categories} />
+              <CategoryBadge categories={categories} linkable />
               {date && <time class="article__date" datetime={dateAttr}>{date}</time>}
             </div>
             <button
