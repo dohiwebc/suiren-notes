@@ -96,50 +96,50 @@ const description = "Web制作の制作実績一覧。Suiren Notes。";
       }
     </div>
   </section>
-</Layout>
 
-{
-  worksEnabled && publishedWorks.length > 0 && (
-    <>
-      <script is:inline src="/js/config.js"></script>
-      <script is:inline src="/js/microcms.js"></script>
-      <script define:vars={{ worksData: publishedWorks }}>
-        registerWorksForDetail(worksData);
+  {
+    worksEnabled && publishedWorks.length > 0 && (
+      <>
+        <script is:inline src="/js/config.js"></script>
+        <script is:inline src="/js/microcms.js"></script>
+        <script is:inline src="/js/work-detail.js"></script>
+        <script define:vars={{ worksData: publishedWorks }}>
+          registerWorksForDetail(worksData);
+        </script>
+      </>
+    )
+  }
+
+  {
+    worksEnabled && showCategories && publishedWorks.length > 0 && (
+      <script>
+        const filterEl = document.getElementById("works-filter");
+        const cards = document.querySelectorAll<HTMLElement>("[data-work-categories]");
+
+        if (filterEl && cards.length > 0) {
+          filterEl.addEventListener("click", (event) => {
+            const btn = (event.target as HTMLElement).closest<HTMLButtonElement>(
+              "[data-work-category]"
+            );
+            if (!btn) return;
+
+            const current = btn.dataset.workCategory || "すべて";
+
+            filterEl.querySelectorAll(".filter__btn").forEach((b) => {
+              const isActive = (b as HTMLButtonElement).dataset.workCategory === current;
+              b.classList.toggle("filter__btn--active", isActive);
+              b.setAttribute("aria-pressed", isActive ? "true" : "false");
+            });
+
+            cards.forEach((card) => {
+              const categories = (card.dataset.workCategories || "").split("|");
+              const visible = current === "すべて" || categories.includes(current);
+              card.hidden = !visible;
+              card.style.display = visible ? "" : "none";
+            });
+          });
+        }
       </script>
-      <script is:inline src="/js/work-detail.js"></script>
-    </>
-  )
-}
-
-{
-  worksEnabled && showCategories && publishedWorks.length > 0 && (
-    <script>
-      const filterEl = document.getElementById("works-filter");
-      const cards = document.querySelectorAll<HTMLElement>("[data-work-categories]");
-
-      if (filterEl && cards.length > 0) {
-        filterEl.addEventListener("click", (event) => {
-          const btn = (event.target as HTMLElement).closest<HTMLButtonElement>(
-            "[data-work-category]"
-          );
-          if (!btn) return;
-
-          const current = btn.dataset.workCategory || "すべて";
-
-          filterEl.querySelectorAll(".filter__btn").forEach((b) => {
-            const isActive = (b as HTMLButtonElement).dataset.workCategory === current;
-            b.classList.toggle("filter__btn--active", isActive);
-            b.setAttribute("aria-pressed", isActive ? "true" : "false");
-          });
-
-          cards.forEach((card) => {
-            const categories = (card.dataset.workCategories || "").split("|");
-            const visible = current === "すべて" || categories.includes(current);
-            card.hidden = !visible;
-            card.style.display = visible ? "" : "none";
-          });
-        });
-      }
-    </script>
-  )
-}
+    )
+  }
+</Layout>
