@@ -9,26 +9,29 @@ interface Props {
 
 const { categories, linkable = false } = Astro.props;
 const labels = categories.map((c) => String(c).trim()).filter(Boolean);
-
-function renderBadge(label: string) {
-  if (linkable) {
-    return (
-      <a href={getCategoryPath(label)} class="badge badge--link">
-        {label}
-      </a>
-    );
-  }
-  return <span class="badge">{label}</span>;
-}
 ---
 
 {
   labels.length > 0 &&
     (labels.length === 1 ? (
-      renderBadge(labels[0])
+      linkable ? (
+        <a href={getCategoryPath(labels[0])} class="badge badge--link">
+          {labels[0]}
+        </a>
+      ) : (
+        <span class="badge">{labels[0]}</span>
+      )
     ) : (
       <span class="badges">
-        {labels.map((label) => renderBadge(label))}
+        {labels.map((label) =>
+          linkable ? (
+            <a href={getCategoryPath(label)} class="badge badge--link">
+              {label}
+            </a>
+          ) : (
+            <span class="badge">{label}</span>
+          )
+        )}
       </span>
     ))
 }
