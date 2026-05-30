@@ -1002,6 +1002,14 @@ body.cookie-consent-open .footer {
     font-size: 0.62rem;
   }
 
+  .page--blog .card-grid .card--article .badges {
+    gap: 0.35rem 0;
+  }
+
+  .page--blog .card-grid .card--article .badges > .badge:not(:last-child) {
+    margin-right: 0.55rem;
+  }
+
   .page--home .card-grid--home .card--work,
   .page--works .card-grid .card--work {
     display: grid;
@@ -1318,6 +1326,14 @@ body.work-modal-open {
     margin: 0 0 0.65rem;
     -webkit-line-clamp: 2;
   }
+
+  .page--blog .card-grid .card--article .badges {
+    gap: 0.45rem 0;
+  }
+
+  .page--blog .card-grid .card--article .badges > .badge:not(:last-child) {
+    margin-right: 0.75rem;
+  }
 }
 
 /* Works：準備中表示 */
@@ -1368,6 +1384,30 @@ body.work-modal-open {
   flex-wrap: wrap;
   gap: 0.25rem 0.55rem;
   margin-bottom: 0.2rem;
+}
+
+/* 記事カード・記事詳細：複数カテゴリの横間隔 */
+.page--home .card-grid--home .card--article .badges,
+.article__related .card--article .badges,
+.page--article .article__meta .badges {
+  gap: 0.35rem 1rem;
+}
+
+/* Blog 記事一覧カード：カテゴリを「N高　スクーリング」のように分けて見せる */
+.page--blog .card-grid .card--article .badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0;
+}
+
+.page--blog .card-grid .card--article .badges > .badge:not(:last-child) {
+  margin-right: 0.6rem;
+}
+
+.page--blog .card-grid .card--article .badge {
+  padding-inline: 0;
+  letter-spacing: 0.1em;
 }
 
 .badge {
