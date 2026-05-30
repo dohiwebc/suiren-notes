@@ -90,6 +90,8 @@ https://suiren-notes.pages.dev
 
 Cloudflare Pages の環境変数 `PUBLIC_SITE_URL` に `https://suiren-notes.pages.dev` を設定してください（未設定でもこの URL が既定値として使われます）。
 
+**GitHub Pages は使用しません。** 本番デプロイは Cloudflare Pages の Git 連携のみです。リポジトリで GitHub Pages を有効にすると、不要な `pages-build-deployment` チェックが失敗するため、有効にしないでください。
+
 ## SEO 対応
 
 - ページごとの title / meta description
