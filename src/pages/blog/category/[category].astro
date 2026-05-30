@@ -1,0 +1,68 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ArticleCard from "../../../components/ArticleCard.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import { BLOG_CATEGORIES } from "../../../config";
+import { absoluteUrl } from "../../../config";
+import { getAllBlogPosts } from "../../../lib/microcms";
+import { getBlogCategories, getCategoryPath, postMatchesBlogCategory } from "../../../lib/utils";
+
+export async function getStaticPaths() {
+  const categories = BLOG_CATEGORIES.filter((c) => c !== "すべて");
+  return categories.map((category) => ({
+    params: { category },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const posts = await getAllBlogPosts();
+const filtered = posts
+  .filter((post) => postMatchesBlogCategory(post, category))
+  .sort(
+    (a, b) =>
+      new Date(b.publishedAt || b.createdAt || 0).getTime() -
+      new Date(a.publishedAt || a.createdAt || 0).getTime()
+  );
+
+const description = `${category} カテゴリの記事一覧。Suiren Notes。`;
+---
+
+<Layout
+  title={`${category} | Blog | Suiren Notes`}
+  description={description}
+  canonical={absoluteUrl(getCategoryPath(category))}
+  pageClass="page--blog"
+>
+  <div class="container page-hero">
+    <span class="page-hero__label">記録</span>
+    <h1 class="page-hero__title">{category}</h1>
+    <p class="page-hero__lead">カテゴリ「{category}」の記事一覧</p>
+  </div>
+
+  <section class="section container" aria-label="記事一覧">
+    <Breadcrumb
+      items={[
+        { label: "Home", href: "/" },
+        { label: "Blog", href: "/blog/" },
+        { label: category },
+      ]}
+    />
+    <p class="section__more" style="margin-bottom: 1.5rem;">
+      <a href="/blog/" class="btn btn--secondary">← すべての記事</a>
+    </p>
+    <div id="blog-list">
+      {
+        filtered.length > 0 ? (
+          <div class="card-grid card-grid--3">
+            {filtered.map((post) => (
+              <ArticleCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <p class="message message--empty">このカテゴリの記事はまだありません</p>
+        )
+      }
+    </div>
+  </section>
+</Layout>

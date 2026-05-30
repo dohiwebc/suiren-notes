@@ -1,0 +1,108 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_CONFIG, getSiteUrl } from "../config";
+import { getProfile } from "../lib/microcms";
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  pageClass?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = "website",
+  ogImage,
+  pageClass = "",
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const siteUrl = getSiteUrl();
+const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl + "/").href;
+const imageUrl = ogImage
+  ? ogImage.startsWith("http")
+    ? ogImage
+    : `${siteUrl}${ogImage}`
+  : `${siteUrl}${SITE_CONFIG.ogImage}`;
+
+const profile = await getProfile();
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href={`${SITE_CONFIG.favicon}?v=3`} type="image/png" />
+    <link rel="apple-touch-icon" href={`${SITE_CONFIG.favicon}?v=3`} />
+    <meta property="og:site_name" content={SITE_CONFIG.name} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE_CONFIG.name} RSS`} href={`${siteUrl}/rss.xml`} />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script is:inline define:vars={{ privacyHref: "/privacy/" }}>
+      window.SUIREN_FROM_ROOT = "/";
+      window.SUIREN_BLOG_INDEX = "/blog/";
+      window.SUIREN_PRIVACY_HREF = privacyHref;
+    </script>
+    <script is:inline src="/js/gtag-init.js"></script>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.gaId}`}></script>
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
+  </head>
+  <body>
+    <div class={`page ${pageClass}`.trim()}>
+      <Header currentPath={Astro.url.pathname} />
+      <main class="page__main">
+        <slot />
+      </main>
+      <Footer profile={profile} year={year} />
+    </div>
+    <script is:inline src="/js/consent.js"></script>
+    <script is:inline src="/js/animations.js"></script>
+    <script is:inline>
+      (function initHeader() {
+        const header = document.querySelector(".header");
+        if (!header) return;
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const scrollThreshold = 16;
+        function updateScrollState() {
+          header.classList.toggle("header--scrolled", window.scrollY > scrollThreshold);
+        }
+        function showHeader() {
+          header.classList.add("header--ready");
+        }
+        if (reduceMotion) showHeader();
+        else requestAnimationFrame(showHeader);
+        updateScrollState();
+        window.addEventListener("scroll", updateScrollState, { passive: true });
+      })();
+    </script>
+  </body>
+</html>

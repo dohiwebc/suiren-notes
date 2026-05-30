@@ -1,0 +1,43 @@
+---
+import CategoryBadge from "./CategoryBadge.astro";
+import type { Work } from "../lib/microcms";
+import { getImageUrl } from "../lib/utils";
+import { getWorkCategories } from "../lib/microcms";
+
+interface Props {
+  work: Work;
+}
+
+const { work } = Astro.props;
+const imgUrl = getImageUrl(work.thumbnail, work.title);
+const demoUrl =
+  work.url && /^https?:\/\//i.test(work.url.trim()) ? work.url.trim() : null;
+---
+
+<article class="card card--work">
+  <div class="card__image-wrap">
+    <img src={imgUrl} alt="" class="card__image" loading="lazy" width="400" height="225" />
+  </div>
+  <div class="card__body">
+    <CategoryBadge categories={getWorkCategories(work)} />
+    <h3 class="card__title">{work.title}</h3>
+    <p class="card__description">{work.description || ""}</p>
+    <div class="card__actions">
+      <button type="button" class="btn btn--small btn--secondary" data-work-detail={work.id}>
+        詳細を見る
+      </button>
+      {
+        demoUrl && (
+          <a
+            href={demoUrl}
+            class="btn btn--small btn--accent"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            デモを見る
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>

@@ -1,0 +1,52 @@
+---
+import { BLOG_CATEGORIES } from "../config";
+---
+
+<div id="blog-filter" class="filter" aria-label="カテゴリフィルター">
+  {
+    BLOG_CATEGORIES.map((cat, index) => (
+      <button
+        type="button"
+        class:list={["filter__btn", { "filter__btn--active": index === 0 }]}
+        data-category={cat}
+        aria-pressed={index === 0 ? "true" : "false"}
+      >
+        {cat}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  const filterEl = document.getElementById("blog-filter");
+  const cards = document.querySelectorAll<HTMLElement>("[data-blog-category]");
+
+  if (filterEl && cards.length > 0) {
+    let currentCategory = "すべて";
+
+    filterEl.addEventListener("click", (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-category]");
+      if (!btn) return;
+
+      currentCategory = btn.dataset.category || "すべて";
+
+      filterEl.querySelectorAll(".filter__btn").forEach((b) => {
+        const isActive = (b as HTMLButtonElement).dataset.category === currentCategory;
+        b.classList.toggle("filter__btn--active", isActive);
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      cards.forEach((card) => {
+        const categories = (card.dataset.blogCategory || "").split("|");
+        const visible =
+          currentCategory === "すべて" || categories.includes(currentCategory);
+        card.hidden = !visible;
+        card.style.display = visible ? "" : "none";
+      });
+
+      if (typeof window.refreshPageAnimations === "function") {
+        window.refreshPageAnimations();
+      }
+    });
+  }
+</script>

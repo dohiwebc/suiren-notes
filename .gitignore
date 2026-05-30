@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# build
+dist/
+
+# env（APIキーはコミットしない）
+.env
+.env.local
+.env.*.local
+
+# logs
+npm-debug.log*
+.DS_Store
+.astro/

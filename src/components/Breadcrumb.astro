@@ -1,0 +1,71 @@
+---
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="パンくずリスト">
+  <ol class="breadcrumb__list">
+    {
+      items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        return (
+          <li class="breadcrumb__item">
+            {isLast || !item.href ? (
+              <span class="breadcrumb__current" aria-current={isLast ? "page" : undefined}>
+                {item.label}
+              </span>
+            ) : (
+              <a href={item.href} class="breadcrumb__link">
+                {item.label}
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    margin-bottom: 1.25rem;
+  }
+
+  .breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #627d98);
+  }
+
+  .breadcrumb__item:not(:last-child)::after {
+    content: "›";
+    margin-left: 0.5rem;
+    opacity: 0.6;
+  }
+
+  .breadcrumb__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .breadcrumb__link:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb__current {
+    color: var(--color-text, #243b53);
+  }
+</style>

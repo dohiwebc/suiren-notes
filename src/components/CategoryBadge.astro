@@ -1,0 +1,21 @@
+---
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+const labels = categories.map((c) => String(c).trim()).filter(Boolean);
+---
+
+{
+  labels.length > 0 &&
+    (labels.length === 1 ? (
+      <span class="badge">{labels[0]}</span>
+    ) : (
+      <span class="badges">
+        {labels.map((label) => (
+          <span class="badge">{label}</span>
+        ))}
+      </span>
+    ))
+}

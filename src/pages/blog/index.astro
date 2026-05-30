@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import BlogFilter from "../../components/BlogFilter.astro";
+import { getAllBlogPosts } from "../../lib/microcms";
+import { getBlogCategories } from "../../lib/utils";
+import { absoluteUrl } from "../../config";
+
+const posts = await getAllBlogPosts();
+const sorted = [...posts].sort(
+  (a, b) =>
+    new Date(b.publishedAt || b.createdAt || 0).getTime() -
+    new Date(a.publishedAt || a.createdAt || 0).getTime()
+);
+
+const description =
+  "N高・スクーリング・日常・進路・Web制作について書いたブログ記事一覧。Suiren Notes。";
+---
+
+<Layout
+  title="Blog | Suiren Notes"
+  description={description}
+  canonical={absoluteUrl("/blog/")}
+  pageClass="page--blog"
+>
+  <div class="container page-hero">
+    <span class="page-hero__label">記録</span>
+    <h1 class="page-hero__title">Blog</h1>
+    <p class="page-hero__lead">ゆっくり書く、個人ログ。動画では話しきれなかったことを残していく。</p>
+    <p class="blog-notice" role="note">
+      N高・スクーリングに関する記事は、2026年時点の個人の体験です。制度やスクーリングの仕様は年度・コースで変わる可能性があります。
+    </p>
+  </div>
+
+  <section class="section container" aria-label="記事一覧">
+    <BlogFilter />
+    <div id="blog-list">
+      {
+        sorted.length > 0 ? (
+          <div class="card-grid card-grid--3">
+            {sorted.map((post) => (
+              <div data-blog-category={getBlogCategories(post).join("|")}>
+                <ArticleCard post={post} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p class="message message--empty">まだ記事がありません</p>
+        )
+      }
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,4 @@
+# 旧URLから新URLへのリダイレクト（Cloudflare Pages）
+/privacy.html /privacy/ 301
+/article/index.html /article/ 301
+/articles/*.html /blog/ 301

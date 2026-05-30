@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="ページが見つかりません | Suiren Notes"
+  description="お探しのページは見つかりませんでした。"
+  pageClass="page--404"
+  noindex={true}
+>
+  <section class="section container" aria-label="404">
+    <div class="page-hero">
+      <span class="page-hero__label">404</span>
+      <h1 class="page-hero__title">ページが見つかりません</h1>
+      <p class="page-hero__lead">お探しのページは移動または削除された可能性があります。</p>
+      <p class="section__more">
+        <a href="/" class="btn btn--primary">トップへ戻る</a>
+        <a href="/blog/" class="btn btn--secondary">ブログ一覧</a>
+      </p>
+    </div>
+  </section>
+</Layout>

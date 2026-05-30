@@ -1,0 +1,42 @@
+---
+import CategoryBadge from "./CategoryBadge.astro";
+import type { BlogPost } from "../lib/microcms";
+import {
+  getArticlePath,
+  getBlogCategories,
+  getBlogEyecatch,
+  getDisplayDate,
+  getImageUrl,
+} from "../lib/utils";
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const imgUrl = getImageUrl(getBlogEyecatch(post), post.title);
+const date = getDisplayDate(post);
+const href = getArticlePath(post);
+const dateAttr = post.publishedAt || post.createdAt || "";
+---
+
+<article class="card card--article">
+  <a href={href} class="card__link">
+    <div class="card__image-wrap">
+      <img
+        src={imgUrl}
+        alt=""
+        class="card__image"
+        loading="lazy"
+        width="400"
+        height="225"
+      />
+    </div>
+    <div class="card__body">
+      <CategoryBadge categories={getBlogCategories(post)} />
+      <h3 class="card__title">{post.title}</h3>
+      <p class="card__description">{post.description || ""}</p>
+      {date && <time class="card__date" datetime={dateAttr}>{date}</time>}
+    </div>
+  </a>
+</article>

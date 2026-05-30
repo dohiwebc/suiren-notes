@@ -1,0 +1,160 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import ArticleShare from "../../components/ArticleShare.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import CategoryBadge from "../../components/CategoryBadge.astro";
+import { SITE_CONFIG, absoluteUrl } from "../../config";
+import type { BlogPost } from "../../lib/microcms";
+import { getAllBlogPosts } from "../../lib/microcms";
+import { sanitizeRichText } from "../../lib/sanitize";
+import {
+  getArticleDescription,
+  getArticleUrl,
+  getBlogCategories,
+  getBlogEyecatch,
+  getDisplayDate,
+  getImageUrl,
+  getPostSlug,
+  getRelatedPosts,
+} from "../../lib/utils";
+
+export async function getStaticPaths() {
+  const posts = await getAllBlogPosts();
+  return posts.map((post) => ({
+    params: { slug: getPostSlug(post) },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const allPosts = await getAllBlogPosts();
+const relatedPosts = getRelatedPosts(post, allPosts);
+const categories = getBlogCategories(post);
+const primaryCategory = categories[0];
+
+const pageTitle = `${post.title} | Suiren Notes`;
+const description = getArticleDescription(post);
+const articleUrl = getArticleUrl(post);
+const imgUrl = getImageUrl(getBlogEyecatch(post), post.title);
+const shareImage =
+  imgUrl.startsWith("data:") ? absoluteUrl(SITE_CONFIG.ogImage) : imgUrl;
+const date = getDisplayDate(post);
+const dateAttr = post.publishedAt || post.createdAt || "";
+const bodyHtml = sanitizeRichText(post.body || "<p>本文がありません。</p>");
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description,
+  image: shareImage,
+  url: articleUrl,
+  datePublished: post.publishedAt || post.createdAt,
+  dateModified: post.updatedAt || post.revisedAt || post.publishedAt || post.createdAt,
+  author: {
+    "@type": "Person",
+    name: SITE_CONFIG.author,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: SITE_CONFIG.name,
+    logo: {
+      "@type": "ImageObject",
+      url: absoluteUrl(SITE_CONFIG.favicon),
+    },
+  },
+};
+
+const breadcrumbItems = [
+  { label: "Home", href: "/" },
+  { label: "Blog", href: "/blog/" },
+  ...(primaryCategory
+    ? [{ label: primaryCategory, href: `/blog/category/${encodeURIComponent(primaryCategory)}/` }]
+    : []),
+  { label: post.title },
+];
+---
+
+<Layout
+  title={pageTitle}
+  description={description}
+  canonical={articleUrl}
+  ogType="article"
+  ogImage={shareImage}
+  pageClass="page--article"
+  jsonLd={jsonLd}
+>
+  <section class="section container" id="article-content" aria-label="記事本文">
+    <div class="article-page">
+      <Breadcrumb items={breadcrumbItems} />
+      <nav class="article-page__nav" aria-label="記事ナビゲーション">
+        <a href="/blog/" class="btn btn--secondary">← 記事一覧へ</a>
+      </nav>
+      <article class="article">
+        <header class="article__header">
+          <div class="article__meta-row">
+            <div class="article__meta">
+              <CategoryBadge categories={categories} />
+              {date && <time class="article__date" datetime={dateAttr}>{date}</time>}
+            </div>
+            <button
+              type="button"
+              class="article__header-share"
+              data-header-share
+              aria-label="この記事を共有"
+            >
+              <svg
+                class="article__header-share-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="m8.59 13.51 6.83 3.98"></path>
+                <path d="m15.41 6.51-6.82 3.98"></path>
+              </svg>
+              <span class="visually-hidden">この記事を共有</span>
+            </button>
+          </div>
+          <h1>{post.title}</h1>
+        </header>
+        <div class="article__eyecatch">
+          <img src={imgUrl} alt="" width="800" height="450" loading="eager" />
+        </div>
+        <div class="article__body rich-text" set:html={bodyHtml} />
+        <ArticleShare
+          shareUrl={articleUrl}
+          shareTitle={pageTitle}
+          shareText={description}
+        />
+      </article>
+
+      {
+        relatedPosts.length > 0 && (
+          <section class="article__related" aria-labelledby="related-heading">
+            <div class="article__related-header">
+              <p class="article__related-label">{categories.join(" / ")}</p>
+              <h2 id="related-heading" class="article__related-title">同じカテゴリの記事</h2>
+            </div>
+            <div class="card-grid card-grid--3 article__related-grid">
+              {relatedPosts.map((related) => (
+                <ArticleCard post={related} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <div class="article__actions">
+        <a href="/blog/" class="btn btn--secondary">← 記事一覧へ</a>
+      </div>
+    </div>
+  </section>
+</Layout>

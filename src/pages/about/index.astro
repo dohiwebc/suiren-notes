@@ -1,0 +1,96 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { FALLBACK_PROFILE, getProfile } from "../../lib/microcms";
+import { sanitizeRichText } from "../../lib/sanitize";
+import { getImageUrl } from "../../lib/utils";
+import { absoluteUrl } from "../../config";
+
+const profile = await getProfile();
+const imgUrl = getImageUrl(profile.profileImage, profile.name);
+
+function getRichField(fieldName: keyof typeof profile, fallback: string): string {
+  const value = profile[fieldName];
+  if (value && String(value).trim()) return String(value);
+  return fallback;
+}
+
+const sections = [
+  { num: "01", title: "プロフィール", id: "bio", html: getRichField("bio", "<p>プロフィールを準備中です。</p>") },
+  {
+    num: "02",
+    title: "いまやっていること",
+    id: "current",
+    html: getRichField("currentActivities", FALLBACK_PROFILE.currentActivities || ""),
+  },
+  {
+    num: "03",
+    title: "N高を選んだ理由",
+    id: "why-nhigh",
+    html: getRichField("whyNHigh", FALLBACK_PROFILE.whyNHigh || ""),
+  },
+  {
+    num: "04",
+    title: "TikTokとの違い",
+    id: "media",
+    html: getRichField("mediaDifference", FALLBACK_PROFILE.mediaDifference || ""),
+  },
+];
+
+const description =
+  "翠憐 / 08nsuiren のプロフィール。N高生としてのこと、発信の使い分けなどを紹介します。";
+---
+
+<Layout
+  title="About | Suiren Notes"
+  description={description}
+  canonical={absoluteUrl("/about/")}
+  pageClass="page--about"
+>
+  <section class="about container" id="about-content" aria-label="プロフィール">
+    <div class="about__inner">
+      <header class="about-masthead">
+        <div class="about-masthead__visual">
+          <div class="about-masthead__image-wrap">
+            <img
+              class="about-masthead__image"
+              src={imgUrl}
+              alt=""
+              width="200"
+              height="250"
+              loading="eager"
+            />
+          </div>
+        </div>
+        <div class="about-masthead__intro">
+          <p class="about-masthead__label">Profile</p>
+          <h1 class="about-masthead__name">{profile.name || ""}</h1>
+          <p class="about-masthead__catchcopy">{profile.catchcopy || ""}</p>
+          {
+            (profile.school || profile.location) && (
+              <ul class="about-meta">
+                {profile.school && <li class="about-meta__item">{profile.school}</li>}
+                {profile.location && <li class="about-meta__item">{profile.location}</li>}
+              </ul>
+            )
+          }
+        </div>
+      </header>
+
+      <div class="about-body">
+        {
+          sections.map((section) => (
+            <section class="about-section" aria-labelledby={`about-${section.id}-title`}>
+              <div class="about-section__head">
+                <span class="about-section__num" aria-hidden="true">{section.num}</span>
+                <h2 id={`about-${section.id}-title`} class="about-section__title">
+                  {section.title}
+                </h2>
+              </div>
+              <div class="about-section__content rich-text" set:html={sanitizeRichText(section.html)} />
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

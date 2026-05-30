@@ -1,0 +1,184 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import {
+  filterPublishedWorks,
+  getAllBlogPosts,
+  getProfile,
+  getSiteSettings,
+  getWorksList,
+  isWorksEnabled,
+} from "../lib/microcms";
+import { getImageUrl } from "../lib/utils";
+import WorkCard from "../components/WorkCard.astro";
+
+const [settings, profile, posts, works] = await Promise.all([
+  getSiteSettings(),
+  getProfile(),
+  getAllBlogPosts(),
+  getWorksList(),
+]);
+
+const visualUrl = settings.mainVisual
+  ? getImageUrl(settings.mainVisual, settings.siteTitle)
+  : getImageUrl(null, settings.siteTitle || "Suiren Notes");
+
+const latest = [...posts]
+  .sort(
+    (a, b) =>
+      new Date(b.publishedAt || b.createdAt || 0).getTime() -
+      new Date(a.publishedAt || a.createdAt || 0).getTime()
+  )
+  .slice(0, 3);
+
+const pickup = posts.filter((p) => p.isPickup).slice(0, 3);
+const publishedWorks = filterPublishedWorks(works);
+const featuredWorks = publishedWorks.filter((w) => w.isFeatured).slice(0, 3);
+const showWorks = isWorksEnabled(settings) && featuredWorks.length > 0;
+const profileImgUrl = getImageUrl(profile.profileImage, profile.name);
+
+const description =
+  "Suiren Notes — TikTokでは話しきれないことを、ゆっくり書く場所。N高・スクーリング・日常・進路・Web制作の個人ブログ。";
+---
+
+<Layout
+  title="Suiren Notes | 個人ブログ"
+  description={description}
+  canonical={`${import.meta.env.PUBLIC_SITE_URL || "https://suiren08n.static.jp"}/`}
+  pageClass="page--home"
+>
+  <section class="hero container" id="hero" aria-label="ヒーロー">
+    <div class="hero__inner">
+      <div class="hero__content">
+        <p class="hero__site-title">{settings.siteTitle || "Suiren Notes"}</p>
+        <h1 class="hero__title">{settings.heroTitle || ""}</h1>
+        <p class="hero__text">{settings.heroText || ""}</p>
+        <div class="hero__actions">
+          <a href={settings.buttonUrl || "/blog/"} class="btn btn--primary">
+            {settings.buttonText || "最新記事を読む"}
+          </a>
+          <a href={settings.subButtonUrl || "/about/"} class="btn btn--secondary">
+            {settings.subButtonText || "自己紹介を見る"}
+          </a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <img src={visualUrl} alt="" width="600" height="450" loading="eager" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="profile-heading">
+    <div class="section__header">
+      <span class="section__num" aria-hidden="true"></span>
+      <div class="section__title-wrap">
+        <h2 id="profile-heading" class="section__title">Profile</h2>
+        <p class="section__lead">少しだけ、自己紹介</p>
+      </div>
+    </div>
+    <div id="profile-mini">
+      <div class="profile-mini">
+        <div class="profile-mini__image-wrap">
+          <img
+            class="profile-mini__image"
+            src={profileImgUrl}
+            alt=""
+            width="120"
+            height="150"
+            loading="lazy"
+          />
+        </div>
+        <div class="profile-mini__content">
+          <h2 class="profile-mini__name">{profile.name || ""}</h2>
+          <p class="profile-mini__catchcopy">{profile.catchcopy || ""}</p>
+          <p class="profile-mini__school">{profile.school || ""}</p>
+          <a href="/about/" class="btn btn--small btn--accent">もっと知る →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="latest-heading">
+    <div class="section__header">
+      <span class="section__num" aria-hidden="true"></span>
+      <div class="section__title-wrap">
+        <h2 id="latest-heading" class="section__title">Latest</h2>
+        <p class="section__lead">最新の記事</p>
+      </div>
+    </div>
+    <div id="latest-posts">
+      {
+        latest.length > 0 ? (
+          <div class="card-grid card-grid--3 card-grid--home">
+            {latest.map((post) => (
+              <ArticleCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <p class="message message--empty">まだ記事がありません</p>
+        )
+      }
+    </div>
+    <p class="section__more">
+      <a href="/blog/" class="btn btn--secondary">すべての記事を見る →</a>
+    </p>
+  </section>
+
+  {
+    pickup.length > 0 && (
+      <section class="section container" id="pickup-section" aria-labelledby="pickup-heading">
+        <div class="section__header">
+          <span class="section__num" aria-hidden="true"></span>
+          <div class="section__title-wrap">
+            <h2 id="pickup-heading" class="section__title">Pickup</h2>
+            <p class="section__lead">おすすめの記事</p>
+          </div>
+        </div>
+        <div id="pickup-posts">
+          <div class="card-grid card-grid--3 card-grid--home">
+            {pickup.map((post) => (
+              <ArticleCard post={post} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    showWorks && (
+      <section class="section container" id="works-section" aria-labelledby="works-heading">
+        <div class="section__header">
+          <span class="section__num" aria-hidden="true"></span>
+          <div class="section__title-wrap">
+            <h2 id="works-heading" class="section__title">Works</h2>
+            <p class="section__lead">制作実績</p>
+          </div>
+        </div>
+        <div id="featured-works">
+          <div class="card-grid card-grid--3 card-grid--home">
+            {featuredWorks.map((work) => (
+              <WorkCard work={work} />
+            ))}
+          </div>
+        </div>
+        <p class="section__more">
+          <a href="/works/" class="btn btn--secondary">制作実績をすべて見る →</a>
+        </p>
+      </section>
+    )
+  }
+
+  {
+    showWorks && (
+      <>
+        <script is:inline src="/js/config.js"></script>
+        <script is:inline src="/js/microcms.js"></script>
+        <script define:vars={{ worksData: publishedWorks }}>
+          registerWorksForDetail(worksData);
+        </script>
+        <script is:inline src="/js/work-detail.js"></script>
+      </>
+    )
+  }
+</Layout>

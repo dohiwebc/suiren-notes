@@ -1,0 +1,145 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import WorkCard from "../../components/WorkCard.astro";
+import {
+  filterPublishedWorks,
+  getSiteSettings,
+  getWorksList,
+  getWorksLead,
+  getWorksPriceDisclaimer,
+  isWorksEnabled,
+} from "../../lib/microcms";
+import { absoluteUrl } from "../../config";
+
+const settings = await getSiteSettings();
+const works = await getWorksList();
+const publishedWorks = filterPublishedWorks(works);
+const worksEnabled = isWorksEnabled(settings);
+const worksLead = getWorksLead(settings);
+const priceDisclaimer = getWorksPriceDisclaimer(settings);
+const showCategories = settings.showWorksCategories === true;
+
+const WORK_CATEGORIES = ["すべて", "WebApp", "LP", "Brand", "Portfolio", "Other"];
+
+const description = "Web制作の制作実績一覧。Suiren Notes。";
+---
+
+<Layout
+  title="Works | Suiren Notes"
+  description={description}
+  canonical={absoluteUrl("/works/")}
+  pageClass="page--works"
+>
+  <div class="container page-hero">
+    <span class="page-hero__label">制作</span>
+    <h1 class="page-hero__title">Works</h1>
+    {
+      worksEnabled && worksLead && (
+        <p id="works-hero-lead" class="page-hero__lead">{worksLead}</p>
+      )
+    }
+    {
+      worksEnabled && priceDisclaimer && (
+        <p id="works-price-disclaimer" class="works-price-disclaimer">{priceDisclaimer}</p>
+      )
+    }
+  </div>
+
+  <section class="section container" aria-label="制作実績一覧">
+    {
+      worksEnabled && showCategories && publishedWorks.length > 0 && (
+        <div id="works-filter" class="filter" aria-label="カテゴリフィルター">
+          {
+            WORK_CATEGORIES.map((cat, index) => (
+              <button
+                type="button"
+                class:list={["filter__btn", { "filter__btn--active": index === 0 }]}
+                data-work-category={cat}
+                aria-pressed={index === 0 ? "true" : "false"}
+              >
+                {cat}
+              </button>
+            ))
+          }
+        </div>
+      )
+    }
+    <div id="works-list">
+      {
+        !worksEnabled ? (
+          <div class="works-coming-soon" role="status">
+            <p class="works-coming-soon__label">Works</p>
+            <h2 class="works-coming-soon__title">
+              {settings.worksComingSoonTitle || "Coming Soon"}
+            </h2>
+            <p class="works-coming-soon__text">
+              {settings.worksComingSoonText ||
+                "制作実績ページは現在準備中です。公開できる作品から少しずつ掲載していきます。"}
+            </p>
+          </div>
+        ) : publishedWorks.length > 0 ? (
+          <div class="card-grid card-grid--3">
+            {publishedWorks.map((work) => {
+              const cats = Array.isArray(work.category)
+                ? work.category.join("|")
+                : String(work.category || "");
+              return (
+                <div data-work-categories={cats}>
+                  <WorkCard work={work} />
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="message message--empty">公開中の制作実績はまだありません</p>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+{
+  worksEnabled && publishedWorks.length > 0 && (
+    <>
+      <script is:inline src="/js/config.js"></script>
+      <script is:inline src="/js/microcms.js"></script>
+      <script define:vars={{ worksData: publishedWorks }}>
+        registerWorksForDetail(worksData);
+      </script>
+      <script is:inline src="/js/work-detail.js"></script>
+    </>
+  )
+}
+
+{
+  worksEnabled && showCategories && publishedWorks.length > 0 && (
+    <script>
+      const filterEl = document.getElementById("works-filter");
+      const cards = document.querySelectorAll<HTMLElement>("[data-work-categories]");
+
+      if (filterEl && cards.length > 0) {
+        filterEl.addEventListener("click", (event) => {
+          const btn = (event.target as HTMLElement).closest<HTMLButtonElement>(
+            "[data-work-category]"
+          );
+          if (!btn) return;
+
+          const current = btn.dataset.workCategory || "すべて";
+
+          filterEl.querySelectorAll(".filter__btn").forEach((b) => {
+            const isActive = (b as HTMLButtonElement).dataset.workCategory === current;
+            b.classList.toggle("filter__btn--active", isActive);
+            b.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+
+          cards.forEach((card) => {
+            const categories = (card.dataset.workCategories || "").split("|");
+            const visible = current === "すべて" || categories.includes(current);
+            card.hidden = !visible;
+            card.style.display = visible ? "" : "none";
+          });
+        });
+      }
+    </script>
+  )
+}

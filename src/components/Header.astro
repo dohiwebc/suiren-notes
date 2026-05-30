@@ -1,0 +1,39 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const navItems = [
+  { href: "/", label: "Home", match: (p: string) => p === "/" },
+  { href: "/about/", label: "About", match: (p: string) => p.startsWith("/about") },
+  { href: "/blog/", label: "Blog", match: (p: string) => p.startsWith("/blog") || p.startsWith("/articles") },
+  { href: "/works/", label: "Works", match: (p: string) => p.startsWith("/works") },
+];
+
+function isActive(match: (p: string) => boolean): boolean {
+  return match(currentPath);
+}
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="header__logo">
+      <span class="header__logo-main">Suiren Notes</span>
+      <span class="header__logo-sub">by 08nsuiren</span>
+    </a>
+    <nav class="nav" aria-label="メインナビゲーション">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={["nav__link", { "nav__link--active": isActive(item.match) }]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,44 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getIdToSlugMap } from "../../lib/microcms";
+import { absoluteUrl } from "../../config";
+
+const idToSlug = await getIdToSlugMap();
+---
+
+<Layout
+  title="記事 | Suiren Notes"
+  description="Suiren Notes のブログ記事。記事URLが変更されました。"
+  canonical={absoluteUrl("/article/")}
+  pageClass="page--article"
+  noindex={true}
+>
+  <section class="section container" aria-label="記事移転の案内">
+    <div class="article-page">
+      <p class="message" role="status">
+        記事ページは <code>/articles/[slug]/</code> に移動しました。
+      </p>
+      <p class="message">
+        自動的に移動しない場合は、<a href="/blog/">ブログ一覧</a>からご覧ください。
+      </p>
+      <p class="section__more">
+        <a href="/blog/" class="btn btn--primary">ブログ一覧へ</a>
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ idToSlug }}>
+  (function redirectLegacyArticle() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) return;
+
+    const slug = idToSlug[id];
+    if (slug) {
+      window.location.replace(`/articles/${encodeURIComponent(slug)}/`);
+    }
+  })();
+</script>
+
+<!-- 旧URL: /article/index.html?id=xxxxx → /articles/[slug]/ へリダイレクト -->
