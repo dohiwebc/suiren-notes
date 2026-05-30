@@ -1,3 +1,6 @@
+/** 本番サイトURL（Cloudflare Pages） */
+export const DEFAULT_SITE_URL = "https://suiren-notes.pages.dev";
+
 /** サイト共通設定 */
 export const SITE_CONFIG = {
   name: "Suiren Notes",
@@ -19,10 +22,7 @@ export const BLOG_CATEGORIES = [
 ] as const;
 
 export function getSiteUrl(): string {
-  return (import.meta.env.PUBLIC_SITE_URL || "https://suiren08n.static.jp").replace(
-    /\/$/,
-    ""
-  );
+  return (import.meta.env.PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, "");
 }
 
 export function absoluteUrl(path: string): string {

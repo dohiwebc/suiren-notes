@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
+import { absoluteUrl } from "../config";
 import {
   filterPublishedWorks,
   getAllBlogPosts,
@@ -44,7 +45,7 @@ const description =
 <Layout
   title="Suiren Notes | 個人ブログ"
   description={description}
-  canonical={`${import.meta.env.PUBLIC_SITE_URL || "https://suiren08n.static.jp"}/`}
+  canonical={absoluteUrl("/")}
   pageClass="page--home"
 >
   <section class="hero container" id="hero" aria-label="ヒーロー">

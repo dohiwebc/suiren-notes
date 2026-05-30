@@ -25,7 +25,7 @@ npm run dev
 |--------|------|
 | `MICROCMS_SERVICE_DOMAIN` | microCMS のサービスドメイン（例: `suiren`） |
 | `MICROCMS_API_KEY` | microCMS API キー（GET 専用・公開コンテンツ用を推奨） |
-| `PUBLIC_SITE_URL` | 本番 URL（canonical・OGP・sitemap 用） |
+| `PUBLIC_SITE_URL` | 本番 URL（canonical・OGP・sitemap 用。既定: `https://suiren-notes.pages.dev`） |
 
 `.env` は Git にコミットしないでください。
 
@@ -76,6 +76,10 @@ npm run build
 
 記事ごとの HTML は `dist/articles/[slug]/index.html` として生成されます。
 
+## 本番 URL
+
+https://suiren-notes.pages.dev
+
 ## Cloudflare Pages デプロイ
 
 | 項目 | 値 |
@@ -83,6 +87,8 @@ npm run build
 | Build command | `npm run build` |
 | Build output directory | `dist` |
 | Environment variables | `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY`, `PUBLIC_SITE_URL` |
+
+Cloudflare Pages の環境変数 `PUBLIC_SITE_URL` に `https://suiren-notes.pages.dev` を設定してください（未設定でもこの URL が既定値として使われます）。
 
 ## SEO 対応
 

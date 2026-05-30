@@ -2,8 +2,8 @@
  * サイト共通設定（クライアント用・APIキーは含めない）
  */
 const SITE_CONFIG = {
-  BASE_URL: "https://suiren08n.static.jp",
-  OG_IMAGE: "https://suiren08n.static.jp/assets/images/suirennotes-OGP.png",
+  BASE_URL: "https://suiren-notes.pages.dev",
+  OG_IMAGE: "https://suiren-notes.pages.dev/assets/images/suirennotes-OGP.png",
 };
 
 const MICROCMS_CONFIG = {

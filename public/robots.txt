@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://suiren08n.static.jp/sitemap-index.xml
+Sitemap: https://suiren-notes.pages.dev/sitemap-index.xml
