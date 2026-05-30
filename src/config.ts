@@ -8,7 +8,7 @@ export const SITE_CONFIG = {
   handle: "@08nsuiren",
   gaId: "G-7KJFFELQMB",
   ogImage: "/assets/images/suirennotes-OGP.png",
-  favicon: "/favicon.png",
+  favicon: "/favicon.ico",
 } as const;
 
 export const BLOG_CATEGORIES = [
