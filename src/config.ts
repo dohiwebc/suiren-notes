@@ -7,6 +7,8 @@ export const SITE_CONFIG = {
   author: "翠憐 / 08nsuiren",
   handle: "@08nsuiren",
   gaId: "G-7KJFFELQMB",
+  /** Google Search Console（HTMLタグ方式） */
+  googleSiteVerification: "cGVfV9wGRvn2z2oZ0vf9CIdCbMrSqF88OppN0YUYw4I",
   ogImage: "/assets/images/suirennotes-OGP.png",
   favicon: "/favicon-32x32.png",
 } as const;
