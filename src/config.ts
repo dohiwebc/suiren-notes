@@ -32,3 +32,14 @@ export function absoluteUrl(path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${base}${normalized}`;
 }
+
+/** CSS/JS 更新時にインクリメント（キャッシュバスト） */
+export const ASSET_VERSION =
+  import.meta.env.PUBLIC_ASSET_VERSION || "20260605";
+
+/** 静的アセット URL（?v= 付与） */
+export function assetUrl(path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  const separator = normalized.includes("?") ? "&" : "?";
+  return `${normalized}${separator}v=${ASSET_VERSION}`;
+}

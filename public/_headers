@@ -1,0 +1,14 @@
+# HTML・ルートページは常に再検証（デプロイ反映を優先）
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+
+# バージョン付き静的アセットは長期キャッシュ可（?v= 変更で URL が変わる）
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

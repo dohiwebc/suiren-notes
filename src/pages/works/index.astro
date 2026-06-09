@@ -9,7 +9,7 @@ import {
   getWorksPriceDisclaimer,
   isWorksEnabled,
 } from "../../lib/microcms";
-import { absoluteUrl } from "../../config";
+import { absoluteUrl, assetUrl } from "../../config";
 
 const settings = await getSiteSettings();
 const works = await getWorksList();
@@ -100,9 +100,9 @@ const description = "Web制作の制作実績一覧。Suiren Notes。";
   {
     worksEnabled && publishedWorks.length > 0 && (
       <>
-        <script is:inline src="/js/config.js"></script>
-        <script is:inline src="/js/microcms.js"></script>
-        <script is:inline src="/js/work-detail.js"></script>
+        <script is:inline src={assetUrl("/js/config.js")}></script>
+        <script is:inline src={assetUrl("/js/microcms.js")}></script>
+        <script is:inline src={assetUrl("/js/work-detail.js")}></script>
         <script define:vars={{ worksData: publishedWorks }}>
           registerWorksForDetail(worksData);
         </script>

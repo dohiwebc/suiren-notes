@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
-import { absoluteUrl } from "../config";
+import { absoluteUrl, assetUrl } from "../config";
 import {
   filterPublishedWorks,
   getAllBlogPosts,
@@ -173,9 +173,9 @@ const description =
   {
     showWorks && (
       <>
-        <script is:inline src="/js/config.js"></script>
-        <script is:inline src="/js/microcms.js"></script>
-        <script is:inline src="/js/work-detail.js"></script>
+        <script is:inline src={assetUrl("/js/config.js")}></script>
+        <script is:inline src={assetUrl("/js/microcms.js")}></script>
+        <script is:inline src={assetUrl("/js/work-detail.js")}></script>
         <script define:vars={{ worksData: publishedWorks }}>
           registerWorksForDetail(worksData);
         </script>
