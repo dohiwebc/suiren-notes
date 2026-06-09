@@ -1,18 +1,9 @@
-<div id="blog-sort" class="blog-sort" aria-label="並び替え">
-  <span class="blog-sort__label">並び替え</span>
-  <div class="blog-sort__options" role="group" aria-label="記事の並び順">
-    <button
-      type="button"
-      class="blog-sort__btn blog-sort__btn--active"
-      data-sort="newest"
-      aria-pressed="true"
-    >
-      新しい順
-    </button>
-    <button type="button" class="blog-sort__btn" data-sort="oldest" aria-pressed="false">
-      古い順
-    </button>
-  </div>
+<div class="blog-sort">
+  <label for="blog-sort-select" class="blog-sort__label">並び替え</label>
+  <select id="blog-sort-select" class="blog-sort__select" aria-label="記事の並び順">
+    <option value="newest" selected>新しい順</option>
+    <option value="oldest">古い順</option>
+  </select>
 </div>
 
 <script>
@@ -36,23 +27,8 @@
     }
   }
 
-  const sortEl = document.getElementById("blog-sort");
-  if (sortEl) {
-    let currentSort: "newest" | "oldest" = "newest";
-
-    sortEl.addEventListener("click", (event) => {
-      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-sort]");
-      if (!btn?.dataset.sort) return;
-
-      currentSort = btn.dataset.sort === "oldest" ? "oldest" : "newest";
-
-      sortEl.querySelectorAll(".blog-sort__btn").forEach((b) => {
-        const isActive = (b as HTMLButtonElement).dataset.sort === currentSort;
-        b.classList.toggle("blog-sort__btn--active", isActive);
-        b.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-
-      sortBlogCards(currentSort);
-    });
-  }
+  const select = document.getElementById("blog-sort-select") as HTMLSelectElement | null;
+  select?.addEventListener("change", () => {
+    sortBlogCards(select.value === "oldest" ? "oldest" : "newest");
+  });
 </script>
