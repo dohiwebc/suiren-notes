@@ -5,7 +5,14 @@ import Breadcrumb from "../../../components/Breadcrumb.astro";
 import { BLOG_CATEGORIES } from "../../../config";
 import { absoluteUrl } from "../../../config";
 import { getAllBlogPosts } from "../../../lib/microcms";
-import { getBlogCategories, getCategoryPath, postMatchesBlogCategory } from "../../../lib/utils";
+import BlogSort from "../../../components/BlogSort.astro";
+import {
+  getBlogCategories,
+  getCategoryPath,
+  getPostPublishedAtIso,
+  postMatchesBlogCategory,
+  sortBlogPostsByDate,
+} from "../../../lib/utils";
 
 export async function getStaticPaths() {
   const posts = await getAllBlogPosts();
@@ -21,13 +28,10 @@ export async function getStaticPaths() {
 
 const { category } = Astro.props;
 const posts = await getAllBlogPosts();
-const filtered = posts
-  .filter((post) => postMatchesBlogCategory(post, category))
-  .sort(
-    (a, b) =>
-      new Date(b.publishedAt || b.createdAt || 0).getTime() -
-      new Date(a.publishedAt || a.createdAt || 0).getTime()
-  );
+const filtered = sortBlogPostsByDate(
+  posts.filter((post) => postMatchesBlogCategory(post, category)),
+  "newest"
+);
 
 const description = `${category} カテゴリの記事一覧。Suiren Notes。`;
 ---
@@ -55,12 +59,17 @@ const description = `${category} カテゴリの記事一覧。Suiren Notes。`;
     <p class="section__more" style="margin-bottom: 1.5rem;">
       <a href="/blog/" class="btn btn--secondary">← すべての記事</a>
     </p>
+    <div class="blog-toolbar blog-toolbar--sort-only">
+      <BlogSort />
+    </div>
     <div id="blog-list">
       {
         filtered.length > 0 ? (
           <div class="card-grid card-grid--3">
             {filtered.map((post) => (
-              <ArticleCard post={post} />
+              <div data-published-at={getPostPublishedAtIso(post)}>
+                <ArticleCard post={post} />
+              </div>
             ))}
           </div>
         ) : (

@@ -1,0 +1,58 @@
+<div id="blog-sort" class="blog-sort" aria-label="並び替え">
+  <span class="blog-sort__label">並び替え</span>
+  <div class="blog-sort__options" role="group" aria-label="記事の並び順">
+    <button
+      type="button"
+      class="blog-sort__btn blog-sort__btn--active"
+      data-sort="newest"
+      aria-pressed="true"
+    >
+      新しい順
+    </button>
+    <button type="button" class="blog-sort__btn" data-sort="oldest" aria-pressed="false">
+      古い順
+    </button>
+  </div>
+</div>
+
+<script>
+  function sortBlogCards(order: "newest" | "oldest") {
+    const grid = document.querySelector("#blog-list .card-grid");
+    if (!grid) return;
+
+    const mult = order === "newest" ? -1 : 1;
+    const cards = Array.from(grid.children) as HTMLElement[];
+
+    cards.sort((a, b) => {
+      const ta = new Date(a.dataset.publishedAt || 0).getTime();
+      const tb = new Date(b.dataset.publishedAt || 0).getTime();
+      return (ta - tb) * mult;
+    });
+
+    cards.forEach((card) => grid.appendChild(card));
+
+    if (typeof window.refreshPageAnimations === "function") {
+      window.refreshPageAnimations();
+    }
+  }
+
+  const sortEl = document.getElementById("blog-sort");
+  if (sortEl) {
+    let currentSort: "newest" | "oldest" = "newest";
+
+    sortEl.addEventListener("click", (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-sort]");
+      if (!btn?.dataset.sort) return;
+
+      currentSort = btn.dataset.sort === "oldest" ? "oldest" : "newest";
+
+      sortEl.querySelectorAll(".blog-sort__btn").forEach((b) => {
+        const isActive = (b as HTMLButtonElement).dataset.sort === currentSort;
+        b.classList.toggle("blog-sort__btn--active", isActive);
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      sortBlogCards(currentSort);
+    });
+  }
+</script>

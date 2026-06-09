@@ -3,15 +3,12 @@ import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
 import BlogFilter from "../../components/BlogFilter.astro";
 import { getAllBlogPosts } from "../../lib/microcms";
-import { getBlogCategories } from "../../lib/utils";
+import BlogSort from "../../components/BlogSort.astro";
+import { getBlogCategories, getPostPublishedAtIso, sortBlogPostsByDate } from "../../lib/utils";
 import { absoluteUrl } from "../../config";
 
 const posts = await getAllBlogPosts();
-const sorted = [...posts].sort(
-  (a, b) =>
-    new Date(b.publishedAt || b.createdAt || 0).getTime() -
-    new Date(a.publishedAt || a.createdAt || 0).getTime()
-);
+const sorted = sortBlogPostsByDate(posts, "newest");
 
 const description =
   "N高・スクーリング・日常・進路・Web制作について書いたブログ記事一覧。Suiren Notes。";
@@ -33,13 +30,19 @@ const description =
   </div>
 
   <section class="section container" aria-label="記事一覧">
-    <BlogFilter />
+    <div class="blog-toolbar">
+      <BlogFilter />
+      <BlogSort />
+    </div>
     <div id="blog-list">
       {
         sorted.length > 0 ? (
           <div class="card-grid card-grid--3">
             {sorted.map((post) => (
-              <div data-blog-category={getBlogCategories(post).join("|")}>
+              <div
+                data-blog-category={getBlogCategories(post).join("|")}
+                data-published-at={getPostPublishedAtIso(post)}
+              >
                 <ArticleCard post={post} />
               </div>
             ))}

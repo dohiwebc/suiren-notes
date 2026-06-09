@@ -17,6 +17,27 @@ export function getDisplayDate(item: { publishedAt?: string; createdAt?: string 
   return formatDate(item.publishedAt || item.createdAt);
 }
 
+/** 並び替え用の公開日時（publishedAt 優先） */
+export function getPostPublishedAtIso(item: {
+  publishedAt?: string;
+  createdAt?: string;
+}): string {
+  return item.publishedAt || item.createdAt || "";
+}
+
+export function sortBlogPostsByDate<T extends { publishedAt?: string; createdAt?: string }>(
+  posts: T[],
+  order: "newest" | "oldest" = "newest"
+): T[] {
+  const mult = order === "newest" ? -1 : 1;
+  return [...posts].sort(
+    (a, b) =>
+      (new Date(getPostPublishedAtIso(a) || 0).getTime() -
+        new Date(getPostPublishedAtIso(b) || 0).getTime()) *
+      mult
+  );
+}
+
 /** ブログカテゴリ表示名（旧「Web制作」→「制作」） */
 export function normalizeBlogCategory(category: string): string {
   const label = String(category).trim();

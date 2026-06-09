@@ -1932,6 +1932,70 @@ a.badge.badge--link:hover {
   text-underline-offset: 3px;
 }
 
+/* Blog：カテゴリフィルター + 並び替え */
+.blog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.blog-toolbar .filter {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.blog-toolbar--sort-only {
+  justify-content: flex-end;
+}
+
+.blog-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  flex-shrink: 0;
+}
+
+.blog-sort__label {
+  font-size: 0.72rem;
+  color: var(--color-text-sub);
+  letter-spacing: 0.1em;
+}
+
+.blog-sort__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.blog-sort__btn {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 0.35rem 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-sub);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: color 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.blog-sort__btn:hover,
+.blog-sort__btn--active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-accent);
+}
+
 /* フィルター */
 .filter {
   display: flex;
@@ -1965,6 +2029,16 @@ a.badge.badge--link:hover {
 
 /* スマホ：カテゴリフィルターは横スクロール（Blog / Works 共通） */
 @media (max-width: 767px) {
+  .blog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .blog-sort {
+    justify-content: flex-end;
+  }
+
   .filter {
     flex-wrap: nowrap;
     overflow-x: auto;
