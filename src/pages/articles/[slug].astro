@@ -82,6 +82,8 @@ const breadcrumbItems = [
   canonical={articleUrl}
   ogType="article"
   ogImage={shareImage}
+  articlePublishedAt={post.publishedAt || post.createdAt}
+  articleModifiedAt={post.updatedAt || post.revisedAt || post.publishedAt || post.createdAt}
   pageClass="page--article"
   jsonLd={jsonLd}
 >

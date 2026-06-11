@@ -260,6 +260,20 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   return blogPostsCache;
 }
 
+/** sitemap 用：キャッシュを使わず最新の記事一覧を取得 */
+export async function fetchBlogPostsForSitemap(): Promise<BlogPost[]> {
+  try {
+    const posts = await fetchAllFromList<BlogPost>(ENDPOINTS.BLOG);
+    return posts.length > 0 ? posts : [...FALLBACK_BLOG_POSTS];
+  } catch (err) {
+    console.warn(
+      "[Suiren Notes] sitemap 用の記事取得に失敗しました。フォールバックデータを使用します。",
+      err
+    );
+    return [...FALLBACK_BLOG_POSTS];
+  }
+}
+
 /** slug から記事を取得 */
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   const posts = await getAllBlogPosts();

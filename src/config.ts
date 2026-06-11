@@ -1,5 +1,5 @@
-/** 本番サイトURL（Cloudflare Pages） */
-export const DEFAULT_SITE_URL = "https://suiren-notes.pages.dev";
+/** 本番サイトURL */
+export const DEFAULT_SITE_URL = "https://08nsuiren.com";
 
 /** サイト共通設定 */
 export const SITE_CONFIG = {
