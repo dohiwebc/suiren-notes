@@ -35,7 +35,7 @@ export function absoluteUrl(path: string): string {
 
 /** CSS/JS 更新時にインクリメント（キャッシュバスト） */
 export const ASSET_VERSION =
-  import.meta.env.PUBLIC_ASSET_VERSION || "20261019j";
+  import.meta.env.PUBLIC_ASSET_VERSION || "20261019k";
 
 /** 静的アセット URL（?v= 付与） */
 export function assetUrl(path: string): string {

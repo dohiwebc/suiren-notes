@@ -227,8 +227,8 @@ p {
   max-width: 100%;
 }
 
-/* PC：入場アニメ＋スクロール時の影（スマホは一切動かさない） */
-@media (min-width: 768px) {
+/* PCのみ：入場アニメ＋スクロール時の影（スマホ・タブレットは動かさない） */
+@media (min-width: 1024px) {
   .header {
     transition: box-shadow 0.35s ease, border-color 0.35s ease;
   }
@@ -355,16 +355,14 @@ p {
   text-decoration: none;
 }
 
-/* スマホ：fixed 固定（sticky のビクビクを避ける）＋装飾・アニメなし */
-@media (max-width: 767px) {
+/* スマホ・タブレット：fixed（sticky のビクビク回避）＋装飾・アニメなし */
+@media (max-width: 1023px) {
   .header {
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     width: 100%;
-    padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
-    padding-bottom: 0.65rem;
     /* スクロール中の再描画を抑える */
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
@@ -373,13 +371,33 @@ p {
 
   .header-spacer {
     display: block;
-    /* JS 設定前のフォールバック概算 */
-    height: calc(7.25rem + env(safe-area-inset-top, 0px));
   }
 
   .header.header--scrolled {
     border-bottom-color: transparent;
     box-shadow: none;
+  }
+
+  .header__inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* スマホ：縦積みレイアウト＋コンパクト余白 */
+@media (max-width: 767px) {
+  .header {
+    padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 0.65rem;
+  }
+
+  .header-spacer {
+    /* JS 設定前のフォールバック概算 */
+    height: calc(7.25rem + env(safe-area-inset-top, 0px));
+  }
+
+  .header.header--scrolled {
     padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
     padding-bottom: 0.65rem;
   }
@@ -389,9 +407,6 @@ p {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 
   .header__logo {
@@ -425,6 +440,18 @@ p {
 
   .nav__link:not(:last-child)::before {
     margin-left: 0.55rem;
+  }
+}
+
+/* タブレット：横並びのまま固定（余白は変えない） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .header-spacer {
+    height: calc(5.75rem + env(safe-area-inset-top, 0px));
+  }
+
+  .header.header--scrolled {
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 1.25rem;
   }
 }
 

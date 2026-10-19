@@ -131,14 +131,15 @@ const year = new Date().getFullYear();
         if (!header) return;
 
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const mobileQuery = window.matchMedia("(max-width: 767px)");
+        /* スマホ・タブレットは fixed＋装飾なし（PC のみ sticky 装飾） */
+        const compactQuery = window.matchMedia("(max-width: 1023px)");
         const SCROLL_ON = 28;
         const SCROLL_OFF = 6;
         let scrolled = false;
 
         function syncSpacer() {
           if (!spacer) return;
-          if (!mobileQuery.matches) {
+          if (!compactQuery.matches) {
             spacer.style.height = "";
             return;
           }
@@ -146,7 +147,7 @@ const year = new Date().getFullYear();
         }
 
         function updateScrollState() {
-          if (mobileQuery.matches) {
+          if (compactQuery.matches) {
             if (scrolled) {
               scrolled = false;
               header.classList.remove("header--scrolled");
@@ -167,8 +168,8 @@ const year = new Date().getFullYear();
           header.classList.add("header--ready");
         }
 
-        /* スマホは入場アニメなし・スクロール監視なし */
-        if (mobileQuery.matches || reduceMotion) {
+        /* スマホ・タブレットは入場アニメなし・スクロール監視なし */
+        if (compactQuery.matches || reduceMotion) {
           showHeader();
         } else {
           requestAnimationFrame(showHeader);
@@ -180,7 +181,7 @@ const year = new Date().getFullYear();
         window.addEventListener(
           "scroll",
           function onScroll() {
-            if (mobileQuery.matches) return;
+            if (compactQuery.matches) return;
             updateScrollState();
           },
           { passive: true }
@@ -199,10 +200,10 @@ const year = new Date().getFullYear();
           updateScrollState();
         }
 
-        if (typeof mobileQuery.addEventListener === "function") {
-          mobileQuery.addEventListener("change", onBreakpointChange);
-        } else if (typeof mobileQuery.addListener === "function") {
-          mobileQuery.addListener(onBreakpointChange);
+        if (typeof compactQuery.addEventListener === "function") {
+          compactQuery.addEventListener("change", onBreakpointChange);
+        } else if (typeof compactQuery.addListener === "function") {
+          compactQuery.addListener(onBreakpointChange);
         }
       })();
     </script>
