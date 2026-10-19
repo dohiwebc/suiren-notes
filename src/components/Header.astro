@@ -34,7 +34,7 @@ function isActive(match: (p: string) => boolean): boolean {
 }
 ---
 
-<header class="header">
+<header class="header" id="site-header">
   <div class="container header__inner">
     <a href="/" class="header__logo">
       <span class="header__logo-main">Suiren Notes</span>
@@ -54,3 +54,5 @@ function isActive(match: (p: string) => boolean): boolean {
     </nav>
   </div>
 </header>
+{/* スマホ fixed ヘッダー用の高さ確保（JS で高さを同期） */}
+<div class="header-spacer" id="header-spacer" aria-hidden="true"></div>

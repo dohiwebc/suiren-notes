@@ -111,17 +111,26 @@ const year = new Date().getFullYear();
     <script is:inline src={assetUrl("/js/animations.js")}></script>
     <script is:inline>
       (function initHeader() {
-        const header = document.querySelector(".header");
+        const header = document.getElementById("site-header") || document.querySelector(".header");
+        const spacer = document.getElementById("header-spacer");
         if (!header) return;
+
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const mobileQuery = window.matchMedia("(max-width: 767px)");
-        /* ヒステリシス：閾値付近での付け外し連打を防ぐ */
         const SCROLL_ON = 28;
         const SCROLL_OFF = 6;
         let scrolled = false;
 
+        function syncSpacer() {
+          if (!spacer) return;
+          if (!mobileQuery.matches) {
+            spacer.style.height = "";
+            return;
+          }
+          spacer.style.height = `${Math.ceil(header.getBoundingClientRect().height)}px`;
+        }
+
         function updateScrollState() {
-          /* スマホはスクロール装飾を使わない（sticky のピクピク対策） */
           if (mobileQuery.matches) {
             if (scrolled) {
               scrolled = false;
@@ -143,15 +152,42 @@ const year = new Date().getFullYear();
           header.classList.add("header--ready");
         }
 
-        if (reduceMotion) showHeader();
-        else requestAnimationFrame(showHeader);
+        /* スマホは入場アニメなし・スクロール監視なし */
+        if (mobileQuery.matches || reduceMotion) {
+          showHeader();
+        } else {
+          requestAnimationFrame(showHeader);
+        }
 
+        syncSpacer();
         updateScrollState();
-        window.addEventListener("scroll", updateScrollState, { passive: true });
+
+        window.addEventListener(
+          "scroll",
+          function onScroll() {
+            if (mobileQuery.matches) return;
+            updateScrollState();
+          },
+          { passive: true }
+        );
+
+        window.addEventListener("resize", syncSpacer, { passive: true });
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", syncSpacer, { passive: true });
+        }
+
+        function onBreakpointChange() {
+          header.classList.remove("header--scrolled");
+          scrolled = false;
+          showHeader();
+          syncSpacer();
+          updateScrollState();
+        }
+
         if (typeof mobileQuery.addEventListener === "function") {
-          mobileQuery.addEventListener("change", updateScrollState);
+          mobileQuery.addEventListener("change", onBreakpointChange);
         } else if (typeof mobileQuery.addListener === "function") {
-          mobileQuery.addListener(updateScrollState);
+          mobileQuery.addListener(onBreakpointChange);
         }
       })();
     </script>
