@@ -2858,52 +2858,20 @@ a.badge.badge--link:hover {
 }
 
 /* ========================================
-   /n-high/ レスポンシブ改行
-   mobile: 〜639px / tablet: 640〜1023px / desktop: 1024px〜
+   /n-high/
    ======================================== */
-.n-high-br {
-  display: none;
-}
-
-/* モバイルのみ */
-@media (max-width: 639px) {
-  .n-high-br--mobile {
-    display: inline;
-  }
-}
-
-/* タブレットのみ */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .n-high-br--tablet {
-    display: inline;
-  }
-}
-
-/* デスクトップのみ */
-@media (min-width: 1024px) {
-  .n-high-br--desktop {
-    display: inline;
-  }
-}
-
-/* タブレット未満（モバイル＋タブレット） */
-@media (max-width: 1023px) {
-  .n-high-br--until-tablet {
-    display: inline;
-  }
-}
-
-/* タブレット以上 */
-@media (min-width: 640px) {
-  .n-high-br--from-tablet {
-    display: inline;
-  }
-}
-
 .page--n-high .page-hero__title {
-  max-width: 18em;
+  max-width: none;
   line-height: 1.45;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+@media (max-width: 359px) {
+  .page--n-high .page-hero__title {
+    white-space: normal;
+    letter-spacing: 0.04em;
+  }
 }
 
 .page--n-high .page-hero__lead {
