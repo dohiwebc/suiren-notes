@@ -2,23 +2,25 @@
 import Layout from "../../../layouts/Layout.astro";
 import ArticleCard from "../../../components/ArticleCard.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
-import { BLOG_CATEGORIES } from "../../../config";
 import { absoluteUrl } from "../../../config";
 import { getAllBlogPosts } from "../../../lib/microcms";
 import BlogSort from "../../../components/BlogSort.astro";
 import {
-  getBlogCategories,
+  getCategoriesWithPosts,
   getCategoryPath,
   getPostPublishedAtIso,
+  normalizeBlogCategory,
   postMatchesBlogCategory,
   sortBlogPostsByDate,
 } from "../../../lib/utils";
 
+/**
+ * 記事が1件以上あるカテゴリのみ静的生成する。
+ * 「考え事」は normalize により「考えごと」に統合される。
+ */
 export async function getStaticPaths() {
   const posts = await getAllBlogPosts();
-  const fromConfig = BLOG_CATEGORIES.filter((c) => c !== "すべて");
-  const fromPosts = posts.flatMap((post) => getBlogCategories(post));
-  const categories = [...new Set([...fromConfig, ...fromPosts])];
+  const categories = getCategoriesWithPosts(posts);
 
   return categories.map((category) => ({
     params: { category },
@@ -26,7 +28,8 @@ export async function getStaticPaths() {
   }));
 }
 
-const { category } = Astro.props;
+const rawCategory = Astro.props.category as string;
+const category = normalizeBlogCategory(rawCategory);
 const posts = await getAllBlogPosts();
 const filtered = sortBlogPostsByDate(
   posts.filter((post) => postMatchesBlogCategory(post, category)),

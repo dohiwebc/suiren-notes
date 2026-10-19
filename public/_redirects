@@ -2,3 +2,9 @@
 /privacy.html /privacy/ 301
 /article/index.html /article/ 301
 /articles/*.html /blog/ 301
+
+# カテゴリ表記ゆれ：「考え事」→ 正規「考えごと」
+/blog/category/考え事 /blog/category/考えごと/ 301
+/blog/category/考え事/ /blog/category/考えごと/ 301
+/blog/category/%E8%80%83%E3%81%88%E4%BA%8B /blog/category/%E8%80%83%E3%81%88%E3%81%94%E3%81%A8/ 301
+/blog/category/%E8%80%83%E3%81%88%E4%BA%8B/ /blog/category/%E8%80%83%E3%81%88%E3%81%94%E3%81%A8/ 301

@@ -5,7 +5,7 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduceMotion) return;
 
-  const STAGGER_STEP = 0.08;
+  const STAGGER_STEP = 0.07;
   const observed = new WeakSet();
 
   const observer = new IntersectionObserver(
@@ -57,6 +57,7 @@
       ".profile-mini",
       ".about-masthead",
       ".about-section",
+      ".about-body",
       ".filter",
       ".article-page__nav",
       ".article__header",
@@ -65,6 +66,7 @@
       ".article__actions",
       ".works-coming-soon",
       ".link-card",
+      ".n-high-cta",
     ];
 
     simpleSelectors.forEach((selector) => {

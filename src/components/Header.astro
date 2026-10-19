@@ -6,10 +6,27 @@ interface Props {
 const { currentPath } = Astro.props;
 
 const navItems = [
-  { href: "/", label: "Home", match: (p: string) => p === "/" },
-  { href: "/about/", label: "About", match: (p: string) => p.startsWith("/about") },
-  { href: "/blog/", label: "Blog", match: (p: string) => p.startsWith("/blog") || p.startsWith("/articles") },
-  { href: "/works/", label: "Works", match: (p: string) => p.startsWith("/works") },
+  { href: "/", label: "ホーム", match: (p: string) => p === "/" },
+  {
+    href: "/about/",
+    label: "プロフィール",
+    match: (p: string) => p.startsWith("/about"),
+  },
+  {
+    href: "/n-high/",
+    label: "N高",
+    match: (p: string) => p.startsWith("/n-high"),
+  },
+  {
+    href: "/blog/",
+    label: "ブログ",
+    match: (p: string) => p.startsWith("/blog") || p.startsWith("/articles"),
+  },
+  {
+    href: "/works/",
+    label: "制作",
+    match: (p: string) => p.startsWith("/works"),
+  },
 ];
 
 function isActive(match: (p: string) => boolean): boolean {

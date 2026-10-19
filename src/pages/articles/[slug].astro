@@ -135,6 +135,14 @@ const breadcrumbItems = [
       </article>
 
       {
+        categories.includes("N高") && (
+          <p class="article__hub-link">
+            <a href="/n-high/">N高・通信制高校の総合案内を見る →</a>
+          </p>
+        )
+      }
+
+      {
         relatedPosts.length > 0 && (
           <section class="article__related" aria-labelledby="related-heading">
             <div class="article__related-header">
@@ -151,6 +159,9 @@ const breadcrumbItems = [
       }
 
       <div class="article__actions">
+        {categories.includes("N高") && (
+          <a href="/n-high/" class="btn btn--secondary">N高の案内へ</a>
+        )}
         <a href="/blog/" class="btn btn--secondary">← 記事一覧へ</a>
       </div>
     </div>

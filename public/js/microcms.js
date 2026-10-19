@@ -764,6 +764,7 @@ function workMatchesCategory(work, filterCategory) {
 function normalizeBlogCategory(category) {
   const label = String(category).trim();
   if (label === "Web制作") return "制作";
+  if (label === "考え事") return "考えごと";
   return label;
 }
 

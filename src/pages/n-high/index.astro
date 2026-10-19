@@ -1,0 +1,217 @@
+---
+/**
+ * N高・通信制高校の総合案内ページ
+ *
+ * 注意:
+ * - 未確認の学校公式情報・制度の詳細・他者の体験談は創作しない
+ * - 【確認対象】マークの仮置き文は公開前に著者確認が必要
+ *
+ * 改行制御:
+ * - .n-high-br--mobile … 〜639px のみ改行
+ * - .n-high-br--tablet … 640〜1023px のみ改行
+ * - .n-high-br--desktop … 1024px〜 のみ改行
+ * - .n-high-br--until-tablet … 〜1023px で改行
+ * - .n-high-br--from-tablet … 640px〜 で改行
+ */
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { absoluteUrl } from "../../config";
+import { getAllBlogPosts } from "../../lib/microcms";
+import {
+  getArticlePath,
+  postMatchesBlogCategory,
+  sortBlogPostsByDate,
+} from "../../lib/utils";
+
+const allPosts = await getAllBlogPosts();
+const nHighPosts = sortBlogPostsByDate(
+  allPosts.filter((post) => postMatchesBlogCategory(post, "N高")),
+  "newest"
+);
+
+const title = "N高・通信制高校について | Suiren Notes";
+const description =
+  "N高・通信制高校について、現役生の個人体験をもとにまとめた案内ページ。レポート・スクーリング・日常の記録への入り口です。";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: title,
+  description,
+  url: absoluteUrl("/n-high/"),
+  isPartOf: {
+    "@type": "WebSite",
+    name: "Suiren Notes",
+    url: absoluteUrl("/"),
+  },
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={absoluteUrl("/n-high/")}
+  pageClass="page--blog page--n-high"
+  jsonLd={jsonLd}
+>
+  <div class="container page-hero">
+    <span class="page-hero__label">N高</span>
+    <h1 class="page-hero__title">
+      N高・通信制高校<br class="n-high-br n-high-br--until-tablet" />について
+    </h1>
+    <p class="page-hero__lead">
+      TikTokでは話しきれないことを、<br class="n-high-br n-high-br--mobile" />ゆっくり書く場所から。<br
+        class="n-high-br n-high-br--from-tablet"
+      />個人の体験をもとにまとめています。
+    </p>
+    <p class="blog-notice" role="note">
+      このページと関連記事は、2026年時点の個人の体験です。<br
+        class="n-high-br n-high-br--from-tablet"
+      />制度やスクーリングの仕様は年度・コースで変わる可能性があります。<br />学校の公式情報は、必ずN高等学校・角川ドワンゴ学園の案内をご確認ください。
+    </p>
+  </div>
+
+  <section class="section container" aria-labelledby="n-high-intro">
+    <Breadcrumb
+      items={[
+        { label: "Home", href: "/" },
+        { label: "N高について" },
+      ]}
+    />
+
+    <div class="about-body">
+      <section class="about-section" aria-labelledby="n-high-intro">
+        <div class="about-section__head">
+          <span class="about-section__num" aria-hidden="true">01</span>
+          <h2 id="n-high-intro" class="about-section__title">このページについて</h2>
+        </div>
+        <div class="about-section__content rich-text">
+          <p>
+            Suiren Notes では、N高（N高等学校）や通信制高校での学び・生活について、<br
+              class="n-high-br n-high-br--desktop"
+            />動画では話しきれなかったことを記事にしています。
+          </p>
+          <p class="n-high-aside">
+            ここは学校の公式ガイドではありません。<br
+              class="n-high-br n-high-br--until-tablet"
+            />進路の判断材料のひとつとして、<br class="n-high-br n-high-br--mobile" />実際に通っている立場から書いた記録をまとめた入口です。
+          </p>
+        </div>
+      </section>
+
+      <section class="about-section" aria-labelledby="n-high-why">
+        <div class="about-section__head">
+          <span class="about-section__num" aria-hidden="true">02</span>
+          <h2 id="n-high-why" class="about-section__title">
+            なぜ通信制・<br class="n-high-br n-high-br--mobile" />N高を選んだか
+          </h2>
+        </div>
+        <div class="about-section__content rich-text">
+          <p>
+            <!-- 【確認対象】著者の実体験に合わせて文言を確定してください（創作しない） -->
+            毎日通う高校生活が自分には合わないかもしれないと感じたこと、<br
+              class="n-high-br n-high-br--from-tablet"
+            />自分のペースで学びたいと思ったことが、<br
+              class="n-high-br n-high-br--mobile"
+            />通信制を選ぶきっかけでした。<br
+              class="n-high-br n-high-br--until-tablet"
+            />詳しい経緯は記事にまとめています。
+          </p>
+          <p>
+            <a href="/blog/category/N%E9%AB%98/">N高カテゴリの記事一覧</a>
+            や、<br class="n-high-br n-high-br--mobile" />下の関連記事から個別の体験談を読めます。
+          </p>
+        </div>
+      </section>
+
+      <section class="about-section" aria-labelledby="n-high-topics">
+        <div class="about-section__head">
+          <span class="about-section__num" aria-hidden="true">03</span>
+          <h2 id="n-high-topics" class="about-section__title">
+            このサイトで<br class="n-high-br n-high-br--mobile" />書いていること
+          </h2>
+        </div>
+        <div class="about-section__content rich-text">
+          <ul>
+            <li>
+              N高を選んだ理由・<br class="n-high-br n-high-br--mobile" />入学前後のイメージの違い
+            </li>
+            <li>
+              レポートの進め方や、<br class="n-high-br n-high-br--mobile" />実際にやってみて感じたこと
+            </li>
+            <li>
+              スクーリング（持ち物・雰囲気など、<br
+                class="n-high-br n-high-br--mobile"
+              />個人の体験）
+            </li>
+            <li>
+              通信制高校生の一日や、<br class="n-high-br n-high-br--mobile" />日常の過ごし方
+            </li>
+          </ul>
+          <p class="n-high-aside">
+            <!-- 【確認対象】制度の一般論や未体験の内容は書かない。必要なら記事リンクのみに留める -->
+            制度の詳細や最新のコース内容は、<br
+              class="n-high-br n-high-br--until-tablet"
+            />学校の公式情報を優先してください。<br
+              class="n-high-br n-high-br--from-tablet"
+            />ここでは「自分が経験したこと」を中心に書いています。
+          </p>
+        </div>
+      </section>
+
+      <section class="about-section" aria-labelledby="n-high-note">
+        <div class="about-section__head">
+          <span class="about-section__num" aria-hidden="true">04</span>
+          <h2 id="n-high-note" class="about-section__title">読むときの注意</h2>
+        </div>
+        <div class="about-section__content rich-text">
+          <p class="n-high-aside">
+            体験は人・年度・コースによって違います。<br />記事の内容をそのまま一般化せず、気になる点は公式サイトや学校への確認とあわせて読んでください。
+          </p>
+          <p class="n-high-aside">
+            <a href="/about/">プロフィール（About）</a>
+            もあわせてどうぞ。
+          </p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  {
+    nHighPosts.length > 0 && (
+      <section class="section container" aria-labelledby="n-high-articles">
+        <div class="section__header">
+          <span class="section__num" aria-hidden="true"></span>
+          <div class="section__title-wrap">
+            <h2 id="n-high-articles" class="section__title">N高の記事</h2>
+            <p class="section__lead">カテゴリ「N高」の記録</p>
+          </div>
+        </div>
+        <div class="card-grid card-grid--3">
+          {nHighPosts.map((post) => (
+            <ArticleCard post={post} />
+          ))}
+        </div>
+        <p class="section__more">
+          <a href="/blog/" class="btn btn--secondary">すべての記事を見る →</a>
+        </p>
+      </section>
+    )
+  }
+
+  <section class="section container n-high-cta" aria-label="導線">
+    <p class="section__more n-high-cta__buttons">
+      <a href="/blog/category/N%E9%AB%98/" class="btn btn--primary">N高カテゴリへ</a>
+      <a href="/blog/" class="btn btn--secondary">ブログ一覧へ</a>
+    </p>
+    {
+      nHighPosts[0] && (
+        <p class="section__more n-high-cta__latest">
+          <span class="n-high-cta__latest-label">最新のN高記事</span>
+          <a href={getArticlePath(nHighPosts[0])}>{nHighPosts[0].title}</a>
+        </p>
+      )
+    }
+  </section>
+</Layout>

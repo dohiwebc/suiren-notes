@@ -114,17 +114,45 @@ const year = new Date().getFullYear();
         const header = document.querySelector(".header");
         if (!header) return;
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const scrollThreshold = 16;
+        const mobileQuery = window.matchMedia("(max-width: 767px)");
+        /* ヒステリシス：閾値付近での付け外し連打を防ぐ */
+        const SCROLL_ON = 28;
+        const SCROLL_OFF = 6;
+        let scrolled = false;
+
         function updateScrollState() {
-          header.classList.toggle("header--scrolled", window.scrollY > scrollThreshold);
+          /* スマホはスクロール装飾を使わない（sticky のピクピク対策） */
+          if (mobileQuery.matches) {
+            if (scrolled) {
+              scrolled = false;
+              header.classList.remove("header--scrolled");
+            }
+            return;
+          }
+          const y = window.scrollY || 0;
+          if (!scrolled && y > SCROLL_ON) {
+            scrolled = true;
+            header.classList.add("header--scrolled");
+          } else if (scrolled && y < SCROLL_OFF) {
+            scrolled = false;
+            header.classList.remove("header--scrolled");
+          }
         }
+
         function showHeader() {
           header.classList.add("header--ready");
         }
+
         if (reduceMotion) showHeader();
         else requestAnimationFrame(showHeader);
+
         updateScrollState();
         window.addEventListener("scroll", updateScrollState, { passive: true });
+        if (typeof mobileQuery.addEventListener === "function") {
+          mobileQuery.addEventListener("change", updateScrollState);
+        } else if (typeof mobileQuery.addListener === "function") {
+          mobileQuery.addListener(updateScrollState);
+        }
       })();
     </script>
   </body>

@@ -38,11 +38,27 @@ export function sortBlogPostsByDate<T extends { publishedAt?: string; createdAt?
   );
 }
 
-/** ブログカテゴリ表示名（旧「Web制作」→「制作」） */
+/**
+ * ブログカテゴリ表示名の正規化
+ * - 旧「Web制作」→「制作」
+ * - 「考え事」→「考えごと」（表記ゆれを正規URLに統一）
+ */
 export function normalizeBlogCategory(category: string): string {
   const label = String(category).trim();
   if (label === "Web制作") return "制作";
+  if (label === "考え事") return "考えごと";
   return label;
+}
+
+/** 記事が1件以上あるカテゴリのみ（空カテゴリページ生成を防ぐ） */
+export function getCategoriesWithPosts(posts: BlogPost[]): string[] {
+  const set = new Set<string>();
+  for (const post of posts) {
+    for (const cat of getBlogCategories(post)) {
+      set.add(cat);
+    }
+  }
+  return [...set];
 }
 
 /** ブログ記事のカテゴリ一覧 */
@@ -135,7 +151,8 @@ export function getArticleDescription(post: BlogPost): string {
 }
 
 export function getCategoryPath(category: string): string {
-  return `/blog/category/${encodeURIComponent(category)}/`;
+  const normalized = normalizeBlogCategory(category);
+  return `/blog/category/${encodeURIComponent(normalized)}/`;
 }
 
 export function getRelatedPosts(

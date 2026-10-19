@@ -56,12 +56,13 @@ npm run dev
 | URL | 説明 |
 |-----|------|
 | `/` | トップページ |
+| `/n-high/` | N高・通信制高校の総合案内 |
 | `/blog/` | 記事一覧 |
-| `/blog/category/[category]/` | カテゴリ別一覧 |
+| `/blog/category/[category]/` | カテゴリ別一覧（記事があるカテゴリのみ生成） |
 | `/articles/[slug]/` | 記事詳細（静的生成） |
 | `/article/?id=xxx` | 旧 URL（新 URL へリダイレクト） |
 | `/about/` | プロフィール |
-| `/works/` | 制作実績 |
+| `/works/` | 制作実績（準備中は noindex・sitemap 除外） |
 | `/privacy/` | プライバシーポリシー |
 | `/rss.xml` | RSS フィード |
 | `/sitemap-index.xml` | サイトマップ（自動生成） |
@@ -88,16 +89,34 @@ https://suiren-notes.pages.dev
 | Build output directory | `dist` |
 | Environment variables | `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY`, `PUBLIC_SITE_URL` |
 
-Cloudflare Pages の環境変数 `PUBLIC_SITE_URL` に `https://suiren-notes.pages.dev` を設定してください（未設定でもこの URL が既定値として使われます）。
+本番ドメイン想定: `https://08nsuiren.com`（`PUBLIC_SITE_URL` に設定）
 
 **GitHub Pages は使用しません。** 本番デプロイは Cloudflare Pages の Git 連携のみです。リポジトリで GitHub Pages を有効にすると、不要な `pages-build-deployment` チェックが失敗するため、有効にしないでください。
+
+### microCMS 更新後の本番反映（重要）
+
+このサイトは **ビルド時に microCMS から記事を取得して静的 HTML / sitemap を生成**します。  
+管理画面で記事を更新しただけでは本番は変わりません。**再ビルドが必要**です。
+
+推奨フロー（どちらか）:
+
+1. **Git プッシュで Cloudflare Pages が自動ビルド**（通常の運用）
+2. **microCMS の Webhook → Cloudflare Pages Deploy Hook**  
+   - Cloudflare Pages → Settings → Deploy hooks で URL を発行  
+   - microCMS → API 設定 → Webhook で「公開・更新時」にその URL を POST  
+   - これで記事更新のたびに静的 HTML と `sitemap-index.xml` が再生成されます
+
+未設定の場合は、記事更新後に手動で Cloudflare Pages の「Retry deployment」を実行してください。
 
 ## SEO 対応
 
 - ページごとの title / meta description
 - OGP / Twitter Card
 - canonical URL
-- JSON-LD（記事ページ: BlogPosting）
+- JSON-LD（記事: BlogPosting / トップ: WebSite / `/n-high/`: CollectionPage）
+- `/n-high/` 総合案内とサイト内導線
+- 空カテゴリページは生成しない（「考え事」→「考えごと」に正規化）
+- 準備中の `/works/` は noindex かつ sitemap 除外
 - パンくずリスト
 - 関連記事
 - sitemap 自動生成

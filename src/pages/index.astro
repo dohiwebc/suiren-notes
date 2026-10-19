@@ -38,15 +38,31 @@ const featuredWorks = publishedWorks.filter((w) => w.isFeatured).slice(0, 3);
 const showWorks = isWorksEnabled(settings) && featuredWorks.length > 0;
 const profileImgUrl = getImageUrl(profile.profileImage, profile.name);
 
+/** SEO用。画面上の H1 は microCMS の heroTitle を維持（ブランド整合） */
+const title = "Suiren Notes | N高・通信制高校の体験を書く個人ブログ";
 const description =
-  "Suiren Notes — TikTokでは話しきれないことを、ゆっくり書く場所。N高・スクーリング・日常・進路・Web制作の個人ブログ。";
+  "N高生が、スクーリング・レポート・日常・進路について書く個人ブログ。TikTokでは話しきれないことを、ゆっくり残しています。";
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Suiren Notes",
+  url: absoluteUrl("/"),
+  description,
+  inLanguage: "ja",
+  publisher: {
+    "@type": "Person",
+    name: "翠憐 / 08nsuiren",
+  },
+};
 ---
 
 <Layout
-  title="Suiren Notes | 個人ブログ"
+  title={title}
   description={description}
   canonical={absoluteUrl("/")}
   pageClass="page--home"
+  jsonLd={websiteJsonLd}
 >
   <section class="hero container" id="hero" aria-label="ヒーロー">
     <div class="hero__inner">
@@ -61,6 +77,7 @@ const description =
           <a href={settings.subButtonUrl || "/about/"} class="btn btn--secondary">
             {settings.subButtonText || "自己紹介を見る"}
           </a>
+          <a href="/n-high/" class="btn btn--secondary">N高について</a>
         </div>
       </div>
       <div class="hero__visual">
@@ -97,6 +114,23 @@ const description =
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="section container" aria-labelledby="n-high-heading">
+    <div class="section__header">
+      <span class="section__num" aria-hidden="true"></span>
+      <div class="section__title-wrap">
+        <h2 id="n-high-heading" class="section__title">N高</h2>
+        <p class="section__lead">通信制高校・N高の体験まとめ</p>
+      </div>
+    </div>
+    <p>
+      レポートやスクーリング、入学前後に感じたことなど、個人の記録を案内ページにまとめています。
+    </p>
+    <p class="section__more">
+      <a href="/n-high/" class="btn btn--primary">N高の案内を見る →</a>
+      <a href="/blog/category/N%E9%AB%98/" class="btn btn--secondary">N高の記事一覧</a>
+    </p>
   </section>
 
   <section class="section container" aria-labelledby="latest-heading">

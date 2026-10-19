@@ -170,8 +170,13 @@ export const FALLBACK_BLOG_POSTS: BlogPost[] = [
 ];
 
 function getMicroCMSConfig(): { domain: string; apiKey: string } | null {
-  const domain = import.meta.env.MICROCMS_SERVICE_DOMAIN;
-  const apiKey = import.meta.env.MICROCMS_API_KEY;
+  // astro.config.mjs からの呼び出しでは process.env、ページビルド時は import.meta.env
+  const domain =
+    import.meta.env.MICROCMS_SERVICE_DOMAIN ||
+    process.env.MICROCMS_SERVICE_DOMAIN ||
+    "";
+  const apiKey =
+    import.meta.env.MICROCMS_API_KEY || process.env.MICROCMS_API_KEY || "";
 
   if (!domain || !apiKey || domain === "YOUR_SERVICE_DOMAIN" || apiKey === "your_api_key_here") {
     return null;

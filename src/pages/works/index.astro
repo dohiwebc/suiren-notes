@@ -21,7 +21,9 @@ const showCategories = settings.showWorksCategories === true;
 
 const WORK_CATEGORIES = ["すべて", "WebApp", "LP", "Brand", "Portfolio", "Other"];
 
-const description = "Web制作の制作実績一覧。Suiren Notes。";
+const description = worksEnabled
+  ? "Web制作の制作実績一覧。Suiren Notes。"
+  : "制作実績ページは準備中です。Suiren Notes。";
 ---
 
 <Layout
@@ -29,6 +31,7 @@ const description = "Web制作の制作実績一覧。Suiren Notes。";
   description={description}
   canonical={absoluteUrl("/works/")}
   pageClass="page--works"
+  noindex={!worksEnabled}
 >
   <div class="container page-hero">
     <span class="page-hero__label">制作</span>
