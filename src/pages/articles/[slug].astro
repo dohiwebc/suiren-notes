@@ -9,6 +9,7 @@ import type { BlogPost } from "../../lib/microcms";
 import { getAllBlogPosts } from "../../lib/microcms";
 import { sanitizeRichText } from "../../lib/sanitize";
 import {
+  buildMicroCMSSrcSet,
   getArticleDescription,
   getArticleUrl,
   getBlogCategories,
@@ -17,6 +18,7 @@ import {
   getImageUrl,
   getPostSlug,
   getRelatedPosts,
+  optimizeMicroCMSImageUrl,
 } from "../../lib/utils";
 
 export async function getStaticPaths() {
@@ -39,9 +41,27 @@ const categories = getBlogCategories(post);
 const pageTitle = `${post.title} | Suiren Notes`;
 const description = getArticleDescription(post);
 const articleUrl = getArticleUrl(post);
-const imgUrl = getImageUrl(getBlogEyecatch(post), post.title);
-const shareImage =
-  imgUrl.startsWith("data:") ? absoluteUrl(SITE_CONFIG.ogImage) : imgUrl;
+const eyecatchRaw = getImageUrl(getBlogEyecatch(post), post.title);
+const imgUrl = optimizeMicroCMSImageUrl(eyecatchRaw, {
+  width: 1200,
+  quality: 76,
+  fit: "max",
+  format: "webp",
+});
+const imgSrcSet = buildMicroCMSSrcSet(eyecatchRaw, [640, 960, 1200], {
+  quality: 76,
+  fit: "max",
+  format: "webp",
+});
+/** OGPは互換性のため jpg 寄りの最適化URL */
+const shareImage = eyecatchRaw.startsWith("data:")
+  ? absoluteUrl(SITE_CONFIG.ogImage)
+  : optimizeMicroCMSImageUrl(eyecatchRaw, {
+      width: 1200,
+      quality: 80,
+      fit: "max",
+      format: "jpg",
+    });
 const date = getDisplayDate(post);
 const dateAttr = post.publishedAt || post.createdAt || "";
 const bodyHtml = sanitizeRichText(post.body || "<p>本文がありません。</p>");
@@ -82,6 +102,7 @@ const breadcrumbItems = [
   canonical={articleUrl}
   ogType="article"
   ogImage={shareImage}
+  preloadImage={imgUrl.startsWith("http") ? imgUrl : undefined}
   articlePublishedAt={post.publishedAt || post.createdAt}
   articleModifiedAt={post.updatedAt || post.revisedAt || post.publishedAt || post.createdAt}
   pageClass="page--article"
@@ -124,7 +145,17 @@ const breadcrumbItems = [
           <h1>{post.title}</h1>
         </header>
         <div class="article__eyecatch">
-          <img src={imgUrl} alt="" width="800" height="450" loading="eager" />
+          <img
+            src={imgUrl}
+            srcset={imgSrcSet || undefined}
+            sizes="(max-width: 720px) 100vw, 640px"
+            alt=""
+            width="800"
+            height="450"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
         </div>
         <div class="article__body rich-text" set:html={bodyHtml} />
         <ArticleShare

@@ -1,6 +1,6 @@
 import { absoluteUrl } from "../config";
 import { sanitizeRichText } from "./sanitize";
-import type { BlogPost, MicroCMSImage } from "./microcms";
+import type { BlogPost } from "./microcms";
 
 /** 日付フォーマット（YYYY.MM.DD） */
 export function formatDate(dateString?: string | null): string {
@@ -85,31 +85,13 @@ export function getBlogEyecatch(post: BlogPost): MicroCMSImage | string | null {
   return post.eyecatch || post.eyepatch || null;
 }
 
-function getPlaceholderImage(label = "Suiren Notes"): string {
-  const safeLabel = String(label)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
-      <rect width="800" height="450" fill="#f0ebe3"/>
-      <rect x="40" y="40" width="720" height="370" fill="none" stroke="#8ab6d6" stroke-width="1" opacity="0.5"/>
-      <text x="400" y="240" text-anchor="middle" fill="#243b53" font-family="Georgia, serif" font-size="18" letter-spacing="4">${safeLabel}</text>
-    </svg>`;
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-}
-
-/** 画像URL取得（なければプレースホルダー） */
-export function getImageUrl(
-  imageField: MicroCMSImage | string | null | undefined,
-  fallbackLabel = "Suiren Notes"
-): string {
-  const placeholder = getPlaceholderImage(fallbackLabel);
-  if (typeof imageField === "string" && imageField.trim()) return imageField.trim();
-  if (imageField && typeof imageField === "object" && imageField.url) {
-    return String(imageField.url).trim();
-  }
-  return placeholder;
-}
+export {
+  buildMicroCMSSrcSet,
+  getImageUrl,
+  getOptimizedImageUrl,
+  optimizeMicroCMSImageUrl,
+} from "./image";
+export type { MicroCMSImageOptions } from "./image";
 
 /**
  * 記事の slug を取得。

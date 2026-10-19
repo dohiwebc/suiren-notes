@@ -10,7 +10,12 @@ import {
   getWorksList,
   isWorksEnabled,
 } from "../lib/microcms";
-import { getImageUrl } from "../lib/utils";
+import {
+  buildMicroCMSSrcSet,
+  getImageUrl,
+  getOptimizedImageUrl,
+  optimizeMicroCMSImageUrl,
+} from "../lib/utils";
 import WorkCard from "../components/WorkCard.astro";
 
 const [settings, profile, posts, works] = await Promise.all([
@@ -20,9 +25,20 @@ const [settings, profile, posts, works] = await Promise.all([
   getWorksList(),
 ]);
 
-const visualUrl = settings.mainVisual
+const visualRaw = settings.mainVisual
   ? getImageUrl(settings.mainVisual, settings.siteTitle)
   : getImageUrl(null, settings.siteTitle || "Suiren Notes");
+const visualUrl = optimizeMicroCMSImageUrl(visualRaw, {
+  width: 900,
+  quality: 74,
+  fit: "max",
+  format: "webp",
+});
+const visualSrcSet = buildMicroCMSSrcSet(visualRaw, [480, 720, 900], {
+  quality: 74,
+  fit: "max",
+  format: "webp",
+});
 
 const latest = [...posts]
   .sort(
@@ -36,7 +52,12 @@ const pickup = posts.filter((p) => p.isPickup).slice(0, 3);
 const publishedWorks = filterPublishedWorks(works);
 const featuredWorks = publishedWorks.filter((w) => w.isFeatured).slice(0, 3);
 const showWorks = isWorksEnabled(settings) && featuredWorks.length > 0;
-const profileImgUrl = getImageUrl(profile.profileImage, profile.name);
+const profileImgUrl = getOptimizedImageUrl(profile.profileImage, profile.name, {
+  width: 240,
+  quality: 72,
+  fit: "crop",
+  format: "webp",
+});
 
 /** SEO用。画面上の H1 は microCMS の heroTitle を維持（ブランド整合） */
 const title = "Suiren Notes | N高・通信制高校の体験を書く個人ブログ";
@@ -62,6 +83,7 @@ const websiteJsonLd = {
   description={description}
   canonical={absoluteUrl("/")}
   pageClass="page--home"
+  preloadImage={visualUrl.startsWith("http") ? visualUrl : undefined}
   jsonLd={websiteJsonLd}
 >
   <section class="hero container" id="hero" aria-label="ヒーロー">
@@ -81,7 +103,17 @@ const websiteJsonLd = {
         </div>
       </div>
       <div class="hero__visual">
-        <img src={visualUrl} alt="" width="600" height="450" loading="eager" />
+        <img
+          src={visualUrl}
+          srcset={visualSrcSet || undefined}
+          sizes="(max-width: 767px) 0px, min(42vw, 520px)"
+          alt=""
+          width="600"
+          height="450"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
       </div>
     </div>
   </section>
@@ -104,6 +136,7 @@ const websiteJsonLd = {
             width="120"
             height="150"
             loading="lazy"
+            decoding="async"
           />
         </div>
         <div class="profile-mini__content">
@@ -145,8 +178,8 @@ const websiteJsonLd = {
       {
         latest.length > 0 ? (
           <div class="card-grid card-grid--3 card-grid--home">
-            {latest.map((post) => (
-              <ArticleCard post={post} />
+            {latest.map((post, index) => (
+              <ArticleCard post={post} priority={index < 2} />
             ))}
           </div>
         ) : (

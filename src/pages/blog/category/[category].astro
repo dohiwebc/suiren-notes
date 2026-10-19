@@ -69,9 +69,9 @@ const description = `${category} カテゴリの記事一覧。Suiren Notes。`;
       {
         filtered.length > 0 ? (
           <div class="card-grid card-grid--3">
-            {filtered.map((post) => (
+            {filtered.map((post, index) => (
               <div data-published-at={getPostPublishedAtIso(post)}>
-                <ArticleCard post={post} />
+                <ArticleCard post={post} priority={index < 2} />
               </div>
             ))}
           </div>

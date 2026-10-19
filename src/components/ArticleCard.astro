@@ -2,19 +2,33 @@
 import CategoryBadge from "./CategoryBadge.astro";
 import type { BlogPost } from "../lib/microcms";
 import {
+  buildMicroCMSSrcSet,
   getArticlePath,
   getBlogCategories,
   getBlogEyecatch,
   getDisplayDate,
-  getImageUrl,
+  getOptimizedImageUrl,
 } from "../lib/utils";
 
 interface Props {
   post: BlogPost;
+  /** 一覧上位など、すぐ見えるカードは eager */
+  priority?: boolean;
 }
 
-const { post } = Astro.props;
-const imgUrl = getImageUrl(getBlogEyecatch(post), post.title);
+const { post, priority = false } = Astro.props;
+const rawField = getBlogEyecatch(post);
+const imgUrl = getOptimizedImageUrl(rawField, post.title, {
+  width: 640,
+  quality: 72,
+  fit: "crop",
+  format: "webp",
+});
+const srcset = buildMicroCMSSrcSet(
+  typeof rawField === "string" ? rawField : rawField?.url || imgUrl,
+  [320, 480, 640],
+  { quality: 72, fit: "crop", format: "webp" }
+);
 const date = getDisplayDate(post);
 const href = getArticlePath(post);
 const dateAttr = post.publishedAt || post.createdAt || "";
@@ -25,11 +39,15 @@ const dateAttr = post.publishedAt || post.createdAt || "";
     <div class="card__image-wrap">
       <img
         src={imgUrl}
+        srcset={srcset || undefined}
+        sizes="(max-width: 519px) 92vw, (max-width: 959px) 38vw, 280px"
         alt=""
         class="card__image"
-        loading="lazy"
         width="400"
         height="225"
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        fetchpriority={priority ? "high" : "auto"}
       />
     </div>
     <div class="card__body">

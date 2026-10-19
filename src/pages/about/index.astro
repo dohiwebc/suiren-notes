@@ -2,11 +2,16 @@
 import Layout from "../../layouts/Layout.astro";
 import { FALLBACK_PROFILE, getProfile } from "../../lib/microcms";
 import { sanitizeRichText } from "../../lib/sanitize";
-import { getImageUrl } from "../../lib/utils";
+import { getOptimizedImageUrl } from "../../lib/utils";
 import { absoluteUrl } from "../../config";
 
 const profile = await getProfile();
-const imgUrl = getImageUrl(profile.profileImage, profile.name);
+const imgUrl = getOptimizedImageUrl(profile.profileImage, profile.name, {
+  width: 400,
+  quality: 74,
+  fit: "crop",
+  format: "webp",
+});
 
 function getRichField(fieldName: keyof typeof profile, fallback: string): string {
   const value = profile[fieldName];
@@ -58,6 +63,8 @@ const description =
               width="200"
               height="250"
               loading="eager"
+              decoding="async"
+              fetchpriority="high"
             />
           </div>
         </div>

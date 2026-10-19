@@ -10,6 +10,8 @@ interface Props {
   canonical?: string;
   ogType?: "website" | "article";
   ogImage?: string;
+  /** LCP画像の先読み（http(s) のときのみ） */
+  preloadImage?: string;
   articlePublishedAt?: string;
   articleModifiedAt?: string;
   pageClass?: string;
@@ -23,6 +25,7 @@ const {
   canonical,
   ogType = "website",
   ogImage,
+  preloadImage,
   articlePublishedAt,
   articleModifiedAt,
   pageClass = "",
@@ -85,6 +88,18 @@ const year = new Date().getFullYear();
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
     <link rel="alternate" type="application/rss+xml" title={`${SITE_CONFIG.name} RSS`} href={`${siteUrl}/rss.xml`} />
+    {
+      preloadImage &&
+        /^https?:\/\//i.test(preloadImage) && (
+          <link
+            rel="preload"
+            as="image"
+            href={preloadImage}
+            type="image/webp"
+            fetchpriority="high"
+          />
+        )
+    }
     <link rel="stylesheet" href={assetUrl("/css/style.css")} />
     <script is:inline define:vars={{ privacyHref: "/privacy/" }}>
       window.SUIREN_FROM_ROOT = "/";

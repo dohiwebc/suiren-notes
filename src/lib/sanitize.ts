@@ -1,4 +1,5 @@
 import sanitizeHtml from "sanitize-html";
+import { optimizeMicroCMSImageUrl } from "./image";
 
 /** CMSのリッチエディタHTMLを安全なタグだけに絞る */
 export function sanitizeRichText(html: string | null | undefined): string {
@@ -38,7 +39,16 @@ export function sanitizeRichText(html: string | null | undefined): string {
     ],
     allowedAttributes: {
       a: ["href", "title", "target", "rel"],
-      img: ["src", "alt", "width", "height", "loading"],
+      img: [
+        "src",
+        "alt",
+        "width",
+        "height",
+        "loading",
+        "decoding",
+        "srcset",
+        "sizes",
+      ],
       td: ["colspan", "rowspan"],
       th: ["colspan", "rowspan"],
     },
@@ -57,13 +67,38 @@ export function sanitizeRichText(html: string | null | undefined): string {
         }
         return { tagName: "a", attribs: { href } };
       },
-      img: (_tagName, attribs) => ({
-        tagName: "img",
-        attribs: {
-          ...attribs,
-          loading: attribs.loading || "lazy",
-        },
-      }),
+      img: (_tagName, attribs) => {
+        const rawSrc = attribs.src || "";
+        const optimized = optimizeMicroCMSImageUrl(rawSrc, {
+          width: 960,
+          format: "webp",
+          quality: 72,
+          fit: "max",
+        });
+        const srcset = [640, 960, 1280]
+          .map(
+            (w) =>
+              `${optimizeMicroCMSImageUrl(rawSrc, {
+                width: w,
+                format: "webp",
+                quality: 72,
+                fit: "max",
+              })} ${w}w`
+          )
+          .join(", ");
+
+        return {
+          tagName: "img",
+          attribs: {
+            ...attribs,
+            src: optimized,
+            srcset,
+            sizes: "(max-width: 720px) 100vw, 640px",
+            loading: attribs.loading || "lazy",
+            decoding: "async",
+          },
+        };
+      },
     },
   });
 }

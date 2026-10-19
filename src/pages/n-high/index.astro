@@ -189,8 +189,8 @@ const jsonLd = {
           </div>
         </div>
         <div class="card-grid card-grid--3">
-          {nHighPosts.map((post) => (
-            <ArticleCard post={post} />
+          {nHighPosts.map((post, index) => (
+            <ArticleCard post={post} priority={index < 2} />
           ))}
         </div>
         <p class="section__more">

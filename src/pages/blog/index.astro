@@ -41,12 +41,12 @@ const description =
       {
         sorted.length > 0 ? (
           <div class="card-grid card-grid--3">
-            {sorted.map((post) => (
+            {sorted.map((post, index) => (
               <div
                 data-blog-category={getBlogCategories(post).join("|")}
                 data-published-at={getPostPublishedAtIso(post)}
               >
-                <ArticleCard post={post} />
+                <ArticleCard post={post} priority={index < 2} />
               </div>
             ))}
           </div>

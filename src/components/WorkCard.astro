@@ -1,7 +1,7 @@
 ---
 import CategoryBadge from "./CategoryBadge.astro";
 import type { Work } from "../lib/microcms";
-import { getImageUrl } from "../lib/utils";
+import { buildMicroCMSSrcSet, getOptimizedImageUrl } from "../lib/utils";
 import { getWorkCategories } from "../lib/microcms";
 
 interface Props {
@@ -9,14 +9,34 @@ interface Props {
 }
 
 const { work } = Astro.props;
-const imgUrl = getImageUrl(work.thumbnail, work.title);
+const imgUrl = getOptimizedImageUrl(work.thumbnail, work.title, {
+  width: 640,
+  quality: 72,
+  fit: "crop",
+  format: "webp",
+});
+const srcset = buildMicroCMSSrcSet(
+  typeof work.thumbnail === "string" ? work.thumbnail : work.thumbnail?.url || imgUrl,
+  [320, 480, 640],
+  { quality: 72, fit: "crop", format: "webp" }
+);
 const demoUrl =
   work.url && /^https?:\/\//i.test(work.url.trim()) ? work.url.trim() : null;
 ---
 
 <article class="card card--work">
   <div class="card__image-wrap">
-    <img src={imgUrl} alt="" class="card__image" loading="lazy" width="400" height="225" />
+    <img
+      src={imgUrl}
+      srcset={srcset || undefined}
+      sizes="(max-width: 519px) 92vw, (max-width: 959px) 45vw, 320px"
+      alt=""
+      class="card__image"
+      loading="lazy"
+      decoding="async"
+      width="400"
+      height="225"
+    />
   </div>
   <div class="card__body">
     <CategoryBadge categories={getWorkCategories(work)} />
